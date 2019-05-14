@@ -1,0 +1,11 @@
+#Don't index folders, so don't show them if we enter directory path in browser
+Options -Indexes
+RewriteEngine On
+# RewriteBase /
+
+#if the request is not a valid file and it is not a valid folder either.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule !\.(css|js|icon|zip|rar|png|jpg|gif|pdf)$ index.php [L]
+
+AddType application/x-httpd-php .php .phtml

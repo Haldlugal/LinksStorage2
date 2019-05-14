@@ -1,0 +1,9 @@
+<h1>Links list</h1>
+<ul>
+    <?php foreach($links as $link) :?>
+    <li>
+        <a href='/link/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
+        <p><?=$link["url"]?></p>
+    </li>
+    <?php endforeach; ?>
+</ul>
