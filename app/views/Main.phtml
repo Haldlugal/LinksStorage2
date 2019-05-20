@@ -1,0 +1,40 @@
+
+<ul class="list-group list-group-flush">
+    <?php
+        $counter = 1;
+        foreach($links as $link) :?>
+    <?php
+        if ($counter%2 == 0) {
+            $listGroupItem = "list-group-item-info";
+        }
+        else {
+            $listGroupItem = "list-group-item-primary";
+        }
+        $counter ++;
+    ?>
+    <li class="list-group-item list-group-item-action <?=$listGroupItem?> px-5">
+        <a href='/link/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
+        <p><?=$link["url"]?></p>
+        <button type="button" class="btn btn-primary">Edit</button>
+        <button type="button" class="btn btn-primary">Delete</button>
+    </li>
+    <?php endforeach; ?>
+</ul>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination  mt-4 px-5">
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
