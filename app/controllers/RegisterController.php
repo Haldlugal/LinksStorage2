@@ -20,7 +20,7 @@ class RegisterController extends CommonController {
                     "password" => $password,
                     "verificationText" => $verificationText);
                 $userModel->addUser($userData);
-                ServiceProvider::getMailer()->sendRegistrationMail($_POST["email"], $verificationText);
+                ServiceProvider::getService("MailerService")->sendRegistrationMail($_POST["email"], $verificationText);
                 $this->data["success"].="Confirmation email has been sent to you";
             }
         }

@@ -1,25 +1,36 @@
 <?php
     require_once "ServiceProvider.php";
+    require_once "Preload.php";
 
 class App {
 
     public function run() {
 
-        ServiceProvider::getService("Preload");
+        Preload::run();
+
+        ServiceProvider::setService("Database", function(){
+            $settings = [
+                "host" => "localhost",
+                "login" => "root",
+                "password" => "R00twala",
+                "dbName" => "linkstorage"
+            ];
+            return new PDOService($settings);
+        });
 
         $router = ServiceProvider::getService("Router");
+
         $data = $router->run();
-        var_dump($data);
+
         if ($data["controller"] == "Controller") {
-            self::redirect("main-page");
+            $data["controller"] = "IndexController";
         }
 
-        if (file_exists("app/controllers/".$data["controller"].".php")) {
-            $controller = new $data["controller"];
-        }
-        else {
-            self::redirect("error");
-        }
+        $controller = new $data["controller"];
+
+        /*$accessControl = ServiceProvider::getService("AccessControl");
+        $accessControl->checkUserRights($_SESSION["userId"], $data["controller"], $data["operation"]);*/
+
         $controller->process($data);
 
     }
@@ -30,3 +41,5 @@ class App {
     }
 
 }
+
+class MissingClassException extends Exception { }

@@ -513,7 +513,7 @@ class PHPMailer
     public $action_function = '';
 
     /**
-     * What to put in the X-Mailer header.
+     * What to put in the X-MailerService header.
      * Options: An empty string for PHPMailer default, whitespace for none, or a string to use.
      *
      * @var string
@@ -1336,7 +1336,7 @@ class PHPMailer
 
     /**
      * Create a message and send it.
-     * Uses the sending method specified by $Mailer.
+     * Uses the sending method specified by $MailerService.
      *
      * @throws Exception
      *
@@ -2359,13 +2359,13 @@ class PHPMailer
         }
         if ('' == $this->XMailer) {
             $result .= $this->headerLine(
-                'X-Mailer',
+                'X-MailerService',
                 'PHPMailer ' . self::VERSION . ' (https://github.com/PHPMailer/PHPMailer)'
             );
         } else {
             $myXmailer = trim($this->XMailer);
             if ($myXmailer) {
-                $result .= $this->headerLine('X-Mailer', $myXmailer);
+                $result .= $this->headerLine('X-MailerService', $myXmailer);
             }
         }
 

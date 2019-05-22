@@ -13,10 +13,10 @@
         $counter ++;
     ?>
     <li class="list-group-item list-group-item-action <?=$listGroupItem?> px-5">
-        <a href='/link/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
+        <a href='/link/read/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
         <p><?=$link["url"]?></p>
-        <button type="button" class="btn btn-primary">Edit</button>
-        <button type="button" class="btn btn-primary">Delete</button>
+        <a href="/link/edit/<?=$link["id"]?>" class="btn btn-primary text-white">Edit</a>
+        <a href="/link/delete/<?=$link["id"]?>" class="btn btn-primary text-white">Delete</a>
     </li>
     <?php endforeach; ?>
 </ul>

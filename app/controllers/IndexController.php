@@ -1,7 +1,7 @@
 <?php
 
 
-class MainPageController extends CommonController {
+class IndexController extends CommonController {
 
     function process($params)
     {
@@ -13,6 +13,7 @@ class MainPageController extends CommonController {
         $this->data["links"] = $links;
 
         $this->view = "Main";
+
         $this->renderView();
     }
 }

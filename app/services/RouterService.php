@@ -1,26 +1,14 @@
 <?php
 
 
-class RouterController extends CommonController
-{
-    protected $controller;
+class RouterService {
 
-    public function process($url) {
+    public function run() {
+        $url = $_SERVER["REQUEST_URI"];
         $parsedUrl = $this->parseUrl($url);
-        if (empty($parsedUrl[0])) {
-            $this->redirect("main-page");
-        }
         $controllerClass = $this->dashesToCamel(array_shift($parsedUrl)."Controller");
-        if (file_exists("controllers/".$controllerClass.".php")) {
-            $this->controller = new $controllerClass;
-        }
-        else {
-            $this->redirect("error");
-        }
-        $this->controller->process($parsedUrl);
-        $this->data["title"] = $this->controller->head["title"];
-        $this->data["description"] = $this->controller->head["description"];
-        $this->view = "layout";
+        $operation = array_shift($parsedUrl);
+        return array("controller" => $controllerClass, "operation" => $operation, "data" => array_shift($parsedUrl));
     }
 
     private function parseUrl($url) {

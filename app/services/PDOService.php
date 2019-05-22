@@ -1,6 +1,6 @@
 <?php
 
-class Database
+class PDOService
 {
     private $connection;
 
@@ -10,8 +10,15 @@ class Database
         PDO::ATTR_EMULATE_PREPARES => false,
     );
 
-    public function __construct() {
-        $this->connect(Config::getDbHost(), Config::getDbLogin(), Config::getDbPassword(), Config::getDbName());
+    public function __construct($settings=array()) {
+        if (empty($settings)) {
+            $config = new Config();
+            $this->connect($config->getDbHost(), $config->getDbLogin(), $config->getDbPassword(), $config->getDbName());
+        }
+        else {
+            $this->connect($settings["host"], $settings["login"], $settings["password"], $settings["dbName"]);
+        }
+
     }
 
     private function connect($host, $user, $password, $database)

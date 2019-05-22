@@ -24,4 +24,11 @@ class LinkModel {
         $selectLinksStatement->execute();
         return $selectLinksStatement->fetchAll();
     }
+
+    public function editLink($id, $title, $url, $description) {
+        $editLinkStatement = $this->pdo->prepare("UPDATE links SET title = :title, url = :url, description = :description WHERE id = :linkId");
+        $linkData = array("linkId" => $id, "title" => $title, "url" => $url, "description" => $description);
+        $editLinkStatement->execute($linkData);
+
+    }
 }
