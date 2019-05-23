@@ -120,11 +120,53 @@ class UserModel
         else return false;
     }
 
+    public function emailExists($email) {
+        $countMailStatement = $this->pdo->prepare("SELECT COUNT(login) FROM users WHERE email = :email");
+        $userData = array("email" => $email);
+        $countMailStatement->execute($userData);
+        if ($countMailStatement->fetchColumn()) {
+            return true;
+        }
+        else return false;
+    }
+
+    /*Activates user's account by verification text*/
     public function verifyUser ($verificationText) {
-        $aprovementStatement = $this->pdo->prepare("UPDATE users SET approved = 1 WHERE verificationText = :verificationText");
+        $approvementStatement = $this->pdo->prepare("UPDATE users SET approved = 1 WHERE verificationText = :verificationText");
         $data = array("verificationText" => $verificationText);
-        $aprovementStatement->execute($data);
-        return $aprovementStatement->rowCount();
+        $approvementStatement->execute($data);
+        return $approvementStatement->rowCount();
+    }
+
+    public function updateVerificationText($userId, $verificationText) {
+        $updateStatement = $this->pdo->prepare("UPDATE users SET verificationText = :verificationText WHERE id = :id");
+        $data = array("verificationText" => $verificationText, "id" => $userId);
+        $updateStatement->execute($data);
+    }
+
+    public function searchForVerificationLinks() {
+        $searchStatement = $this->pdo->prepare("SELECT verificationText, verificationCreated FROM users WHERE verificationText != ''");
+        $searchStatement->execute();
+        return $searchStatement->fetchAll();
+    }
+
+    public function checkIfLinkExpired($link) {
+        $searchStatement = $this->pdo->prepare("SELECT verificationCreated FROM users WHERE verificationText = :verificationText");
+        $data = array("verificationText" => $link);
+        $searchStatement->execute($data);
+        $link = $searchStatement->fetch();
+        $config = ServiceProvider::getService("Config");
+        $clearTime = $config->getUserActivationLinkClearTime();
+        $now = strtotime("-$clearTime minutes");
+        if ($now >strtotime($link["verificationCreated"])){
+            return true;
+        }
+        else return false;
+    }
+    public function deleteExpiredLink($link) {
+        $deleteLinkStatement = $this->pdo->prepare("UPDATE users SET verificationText = '' WHERE verificationText = :verificationText");
+        $data = array("verificationText" => $link);
+        $deleteLinkStatement->execute($data);
     }
 
 

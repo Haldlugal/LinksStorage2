@@ -26,6 +26,8 @@ class MailerService {
             $this->mail->Password = $config->getSmtpAuthentificationPassword();
             /* Set the SMTP port. */
             $this->mail->Port = $config->getSmtpPort();
+            /*Add HTML to body*/
+            $this->mail->isHTML(true);
         }
         else {
             $this->mail->setFrom($settings["emailAddressFrom"], $settings["nameFrom"]);
@@ -44,19 +46,17 @@ class MailerService {
             $this->mail->Password = $settings["smtpAuthPassword"];
             /* Set the SMTP port. */
             $this->mail->Port = $settings["smtpPort"];
+            /*Add HTML to body*/
+            $this->mail->isHTML(true);
         }
-
-
-
-
     }
 
     public function sendRegistrationMail($email, $verificationText)
     {
         $this->mail->addAddress($email);
         $this->mail->Subject = "Account verification from Blog";
-        $this->mail->Body = "Thanks for signing up! Your account has been created. 
-            Please activate it using following link: <a href='http://linkstorage/verify/$verificationText'>http://linkstorage/verify/$verificationText</a>";
+        $this->mail->Body = "<p>Thanks for signing up!</p>
+        <p>Your account has been created. Please activate it using following link: <a href='http://linkstorage/verify/$verificationText'>http://linkstorage/verify/$verificationText</a></p>";
         try {
             $this->mail->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {

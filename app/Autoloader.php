@@ -25,9 +25,9 @@ class Autoloader
                 require("app/services/" . $class . ".php");
             }
         }
-        catch (MissingObjectException $exception) {
+        catch (MissingControllerException $exception) {
             //App::redirect("error");
         }
     }
 }
-class MissingObjectException extends Exception {}
+class MissingControllerException extends Exception {}

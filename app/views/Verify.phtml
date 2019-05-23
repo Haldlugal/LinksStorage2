@@ -1,3 +1,9 @@
 
 
-<p><?=$message?></p>
+<?php if ($error): ?>
+    <div class="alert alert-danger" role="alert"><?=$error?></div>
+<?php endif; ?>
+<?php if ($success): ?>
+    <div class="alert alert-success" role="alert"><?=$success?></div>
+<?php endif; ?>
+<p class="px-4">Go to <a href="/login">login page</a></p>

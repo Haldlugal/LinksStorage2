@@ -1,5 +1,5 @@
 <?php
-    require_once "ServiceProvider.php";
+
     require_once "Preload.php";
 
 class App {
@@ -7,7 +7,6 @@ class App {
     public function run() {
 
         Preload::run();
-
         ServiceProvider::setService("Database", function(){
             $settings = [
                 "host" => "localhost",

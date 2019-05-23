@@ -18,6 +18,8 @@ class Config
     private $dbPassword = "R00twala";
     private $dbName = "linkstorage";
 
+    /*clear user links*/
+    private $userActivationLinkClearTime = 5;
     /**
      * @return string
      */
@@ -106,6 +108,13 @@ class Config
         return $this->dbName;
     }
 
+    /**
+     * @return int
+     */
+    public function getUserActivationLinkClearTime()
+    {
+        return $this->userActivationLinkClearTime;
+    }
 
 
 }
