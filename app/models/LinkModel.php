@@ -9,7 +9,6 @@ class LinkModel {
     {
         $database = ServiceProvider::getService("Database");
         $this->pdo = $database->getConnection();
-
     }
 
     public function getLink ($id) {
@@ -22,6 +21,13 @@ class LinkModel {
     public function getLinksList() {
         $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links");
         $selectLinksStatement->execute();
+        return $selectLinksStatement->fetchAll();
+    }
+
+    public function getLinksListByUserId($userId) {
+        $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links WHERE userId = :userId");
+        $data = array("userId" => $userId);
+        $selectLinksStatement->execute($data);
         return $selectLinksStatement->fetchAll();
     }
 

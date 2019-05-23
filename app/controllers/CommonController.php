@@ -10,10 +10,6 @@ abstract class CommonController
     abstract function process($params);
 
     public function renderView() {
-        $authorization = ServiceProvider::getService("Authorization");
-        $this->data["userInfo"] = $authorization->getUserInfo();
-        $this->data["loggedIn"] = $authorization->isLoggedIn();
-        extract($this->data);
         require("app/views/Header.phtml");
         if ($this->view) {
             require("app/views/".$this->view.".phtml");

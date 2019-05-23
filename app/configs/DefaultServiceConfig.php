@@ -5,12 +5,14 @@ class DefaultServiceConfig {
 
     public function get() {
         return [
-            "Config" => "Config",
             "Router" => "RouterService",
             "Database" => "PDOService",
             "Mailer" => "MailerService",
             "Authorization" => "AuthorizationService",
-            "AccessControl" => "AccessControlService"
+            "Authentication" => "AuthenticationService",
+            "AccessControl" => "AccessControlService",
+            "Config" => "Config",
+            "Data" => "DataService"
         ];
     }
 }

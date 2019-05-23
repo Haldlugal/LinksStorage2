@@ -7,7 +7,12 @@ class ServiceProvider {
     public static $services = array();
 
     public static function getService ($serviceName) {
-        return self::$services[$serviceName];
+        if (self::hasService($serviceName)) {
+            if (is_string(self::$services[$serviceName])) {
+                self::$services[$serviceName] = new self::$services[$serviceName];
+            }
+            return self::$services[$serviceName];
+        }
     }
 
     public static function setService($serviceName, $serviceClassFunction) {
@@ -19,9 +24,6 @@ class ServiceProvider {
     }
 
     public static function setDefaultServices() {
-        $defaultConfig = (new DefaultServiceConfig())->get();
-        foreach ($defaultConfig as $serviceName=>$serviceClassName) {
-            self::$services[$serviceName] = new $serviceClassName();
-        }
+        self::$services = (new DefaultServiceConfig())->get();
     }
 }

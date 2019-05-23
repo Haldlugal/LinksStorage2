@@ -3,16 +3,16 @@
 class RegisterController extends CommonController {
 
     function process($params) {
-        $this->data["error"] = "";
-        $this->data["success"] = "";
+        $data = ServiceProvider::getService("Data");
+
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $userModel = new UserModel();
 
             if ($userModel->loginExists($_POST["login"])){
-                $this->data["error"].= "User with such login: ".$_POST["login"]." already exists";
+                $data->setData("errorMessage", "User with such login: ".$_POST["login"]." already exists");
             }
             /*else if ($userModel->emailExists($_POST['email'])) {
-                $this->data["error"].= "User with such email: ".$_POST["email"]." already exists";
+                $data->setData("errorMessage", "User with such email: ".$_POST["email"]." already exists");
             }*/
             else {
                 $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
@@ -25,7 +25,7 @@ class RegisterController extends CommonController {
                     "verificationText" => $verificationText);
                 $userModel->addUser($userData);
                 ServiceProvider::getService("Mailer")->sendRegistrationMail($_POST["email"], $verificationText);
-                $this->data["success"].="Confirmation email has been sent to you";
+                $data->setData("successMessage", "Confirmation email has been sent to you");
             }
         }
 

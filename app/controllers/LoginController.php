@@ -5,6 +5,7 @@ class LoginController extends CommonController {
 
     function process($params)
     {
+        $data = ServiceProvider::getService("Data");
         if ($params["operation"] == "sendlink") {
             $userModel = new UserModel();
             $userInfo = $userModel->selectUserById($params["data"]);
@@ -13,13 +14,13 @@ class LoginController extends CommonController {
                 $verificationText = md5(rand(0, 10000));
                 $userModel->updateVerificationText($params["data"], $verificationText);
                 $mailer->sendRegistrationMail($userInfo["email"], $verificationText);
-                $this->data["successMessage"] = "Your activation link was resend to your email";
+                $data->setData("successMessage", "Your activation link was resend to your email");
             }
             else if ($userInfo["approved"] != 0) {
-                $this->data["errorMessage"] = "Your email is already approved";
+                $data->setData("errorMessage", "Your email is already approved");
             }
             else if ($userInfo["verificationText"] != "") {
-                $this->data["errorMessage"].="<br>Please, check your email for activation link";
+                $data->setData("errorMessage", "Please, check your email for activation link");
             }
 
         }
@@ -27,15 +28,15 @@ class LoginController extends CommonController {
             $userModel = new UserModel();
             $user = $userModel->checkUser($_POST["login"], $_POST["password"]);
             if ($user==0) {
-                $this->data["errorMessage"] = "Your Login Name or Password is invalid";
+                $data->setData("errorMessage", "Your Login Name or Password is invalid");
             }
             else if ($user["approved"]==0) {
-                $this->data["errorMessage"] = "Your account isn't activated yet";
+                $data->setData("errorMessage", "Your account isn't activated yet");
                 if ($user["verificationText"]=="") {
-                    $this->data["errorMessage"].="<br>Do you want to <a href='/login/sendlink/".$user["id"]."'>resend</a> an activation link?";
+                    $data->setData("errorMessage", $data->getData()["errorMessage"]."<br>Do you want to <a href='/login/sendlink/".$user["id"]."'>resend</a> an activation link?");
                 }
                 else {
-                    $this->data["errorMessage"].="<br>Please, check your email for activation link";
+                    $data->setData("errorMessage", $data->getData()["errorMessage"]."<br>Please, check your email for activation link");
                 }
             }
             else {

@@ -24,6 +24,10 @@ class App {
         if ($data["controller"] == "Controller") {
             $data["controller"] = "IndexController";
         }
+        else if ($data["controller"] == "MyLinksController") {
+            $data["controller"] = "IndexController";
+            $data["operation"] = "myLinks";
+        }
 
         $controller = new $data["controller"];
 

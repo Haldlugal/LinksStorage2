@@ -1,8 +1,10 @@
-
+<?php
+    $data = ServiceProvider::getService("Data")->getData();
+?>
 <ul class="list-group list-group-flush">
     <?php
         $counter = 1;
-        foreach($links as $link) :?>
+        foreach($data["links"] as $link) :?>
     <?php
         if ($counter%2 == 0) {
             $listGroupItem = "list-group-item-info";
@@ -11,12 +13,20 @@
             $listGroupItem = "list-group-item-primary";
         }
         $counter ++;
+
+        if ($link["userId"] != $userId && !$showPrivateLinks && $link["private"] == 1) {
+            continue;
+        }
     ?>
     <li class="list-group-item list-group-item-action <?=$listGroupItem?> px-5">
         <a href='/link/read/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
         <p><?=$link["url"]?></p>
+        <?php if (ServiceProvider::getService("Authentication")->canEditThisLink($link["id"])):?>
         <a href="/link/edit/<?=$link["id"]?>" class="btn btn-primary text-white">Edit</a>
+        <?php endif; ?>
+        <?php if (ServiceProvider::getService("Authentication")->canDeleteThisLink($link["id"])):?>
         <a href="/link/delete/<?=$link["id"]?>" class="btn btn-primary text-white">Delete</a>
+        <?php endif; ?>
     </li>
     <?php endforeach; ?>
 </ul>

@@ -4,29 +4,21 @@
 class AuthorizationService
 {
     private $userInfo;
-    private $roleInfo;
 
     public function __construct() {
-
+        $userModel = new UserModel();
+        if (self::isLoggedIn()) {
+            $this->userInfo = $userModel->selectUserById($_SESSION["userId"]);
+        }
     }
 
     public function getUserInfo() {
-
         return $this->userInfo;
     }
 
-
-
-
-    public static function isLoggedIn() {
+    public function isLoggedIn() {
         return $_SESSION["userId"]!=0;
     }
 
-    /**
-     * @return void
-     */
-    public function getRoleInfo()
-    {
-        return $this->roleInfo;
-    }
+
 }

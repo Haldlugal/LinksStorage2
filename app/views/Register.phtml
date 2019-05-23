@@ -1,3 +1,4 @@
+<?php $data = ServiceProvider::getService("Data")->getData();?>
 <div class="registerPage px-5 py-4 col-md-4">
     <h2>Registration</h2>
     <form class="mb-3" action="/register" method="post">
@@ -6,43 +7,43 @@
             <input id="login" class="form-control" type="text" name="login" placeholder="Login" required>
         </div>
         <div class="form-group ">
-            <label for="login">First Name</label>
+            <label for="firstName">First Name</label>
             <input id="firstName" class="form-control" type="text" name="firstName" placeholder="First Name" required>
         </div>
         <div class="form-group ">
-            <label for="login">Last Name</label>
+            <label for="lastName">Last Name</label>
             <input id="lastName" class="form-control" type="text" name="lastName" placeholder="Last Name" required>
         </div>
         <div class="form-group ">
-            <label for="login">Email</label>
+            <label for="email">Email</label>
             <input id="email" class="form-control" type="email" name="email" placeholder="Email" required>
         </div>
         <div class="form-group ">
-            <label for="login">Password</label>
+            <label for="password">Password</label>
             <input id="password" class="form-control" type="text" name="password" placeholder="Password" required>
         </div>
         <div class="form-group">
-            <label for="login">Confirm Password</label>
-            <input id="confirm_password" class="form-control" type="text" name="" placeholder="Repeat password" required>
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" class="form-control" type="text" name="" placeholder="Repeat password" required>
         </div>
         <button class="btn btn-primary" type="submit">Register</button>
     </form>
 
-    <?php if ($error!=""): ?>
+    <?php if ($data["errorMessage"]!=""): ?>
     <div class="alert alert-danger" role="alert">
-        <?=$error?>
+        <?=$data["errorMessage"]?>
     </div>
     <?php endif; ?>
 
-    <?php if ($success!=""): ?>
+    <?php if ($data["successMessage"]!=""): ?>
     <div class="alert alert-success" role="alert">
-        <?=$success?>
+        <?=$data["successMessage"]?>
     </div>
     <?php endif; ?>
 </div>
 <script>
     let password = document.getElementById("password");
-    let confirm_password = document.getElementById("confirm_password");
+    let confirm_password = document.getElementById("confirmPassword");
     function validatePassword(){
         if(password.value !== confirm_password.value) {
             confirm_password.setCustomValidity("Passwords Don't Match");
