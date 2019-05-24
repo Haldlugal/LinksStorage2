@@ -1,8 +1,8 @@
 
-<?php $data = ServiceProvider::getService("Data")->getData();?>
+<?php $data = ServiceProvider::getService("Authorization")->getUserInfo();?>
 <div class="editLinkPage px-5 py-4 col-md-4">
     <form class="mb-3" method="post">
-        <input type="hidden" name="linkId" value="<?=$data["linkId"]?>">
+        <input type="hidden" name="userId" value="<?=$data["id"]?>">
         <div class="form-group ">
             <label for="linkTitle">Title</label>
             <input id="linkTitle" class="form-control" type="text" name="linkTitle" value="<?=$data["title"]?>" required>
@@ -17,9 +17,9 @@
         </div>
         <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="privacy" name="linkPrivacy"
-            <?php if ($data["private"] == 1) echo "checked"?>>
+                <?php if ($data["private"] == 1) echo "checked"?>>
             <label class="form-check-label" for="privacy">Privacy</label>
         </div>
-        <button class="btn btn-primary" type="submit">Edit Link</button>
+        <button class="btn btn-primary" type="submit">Create Link</button>
     </form>
 </div>

@@ -38,7 +38,11 @@ class PaginationService
         }
 
         for ($i=1; $i<$numberOfElements/$elementsOnPage + 1; $i++){
-            $paginationString.='<li class="page-item"><a class="page-link" href="?page='.$i.'&elementsOnPage='.$elementsOnPage.'">'.$i.'</a></li>';
+            if ($i == $currentPage){
+                $active = "active";
+            }
+            else $active = "";
+            $paginationString.='<li class="page-item '.$active.'"><a class="page-link" href="?page='.$i.'&elementsOnPage='.$elementsOnPage.'">'.$i.'</a></li>';
         }
 
         if ($next!=0) {

@@ -22,7 +22,7 @@ class Config
     private $userActivationLinkClearTime = 5;
 
     /*default pagination*/
-    private $paginationCount = 3;
+    private $paginationCount = 5;
     /**
      * @return string
      */

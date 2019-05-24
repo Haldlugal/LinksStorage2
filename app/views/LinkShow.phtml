@@ -1,3 +1,20 @@
-<h1><?=$title?></h1>
-<p><?=$url?></p>
-<p><?=$description?></p>
+<?php $data = ServiceProvider::getService("Data")->getData();?>
+
+<div class="px-5 my-3 col-md-6">
+    <h3 class="my-0">
+        <?php if ($data["private"]):?>
+            <img src="/images/baseline-assignment_ind-24px.svg">
+        <?php endif; ?>
+        <?=$data["title"]?>
+    </h3>
+    <h5 class="mb-1 wrappable"><?=$data["url"]?></h5>
+    <p class="mb-2">
+        <?php if (ServiceProvider::getService("Authentication")->canEditThisLink($data["linkId"])):?>
+        <a href="/link/edit/<?=$data["linkId"]?>" class="btn btn-primary text-white mr-1 btn-sm px-2 py-0">Edit</a>
+        <?php endif;?>
+        <?php if (ServiceProvider::getService("Authentication")->canDeleteThisLink($data["linkId"])):?>
+        <a href="/link/delete/<?=$data["linkId"]?>" class="btn btn-primary text-white btn-sm px-2 py-0">Delete</a>
+        <?php endif;?>
+    </p>
+    <p class="border-top border-dark py-2"><?=$data["description"]?></p>
+</div>

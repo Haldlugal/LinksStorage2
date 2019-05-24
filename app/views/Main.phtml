@@ -15,8 +15,23 @@
         $counter ++;
     ?>
     <li class="list-group-item list-group-item-action <?=$listGroupItem?> px-5">
-        <a href='/link/read/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
-        <p><?=$link["url"]?></p>
+
+        <a href='/link/read/<?=$link["id"]?>'>
+            <h4>
+                <?php if ($link["private"]):?>
+                <img src="/images/baseline-assignment_ind-24px.svg">
+                <?php endif;?>
+                <?=$link["title"]?>
+            </h4>
+        </a>
+        <p>
+        <?php
+            if (strlen($link["url"])>100) {
+                $link["url"] = substr($link["url"], 0, 97)."...";
+            }
+            echo $link["url"];
+        ?>
+        </p>
         <?php if (ServiceProvider::getService("Authentication")->canEditThisLink($link["id"])):?>
         <a href="/link/edit/<?=$link["id"]?>" class="btn btn-primary text-white">Edit</a>
         <?php endif; ?>

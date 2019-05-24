@@ -65,4 +65,9 @@ class AuthenticationService
         $rightsModel = new RightsModel();
         return $rightsModel->userPermittedToReadPrivateLinks($this->userInfo["roleId"]);
     }
+
+    public function canReadUsersList() {
+        $rightsModel = new RightsModel();
+        return $rightsModel->userPermittedToReadUsersList($this->userInfo["roleId"]);
+    }
 }

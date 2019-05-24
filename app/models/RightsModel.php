@@ -72,6 +72,18 @@ class RightsModel
         }
     }
 
+    public function userPermittedToReadUsersList($roleId) {
+        $statement = $this->pdo->prepare("SELECT COUNT(id) FROM rolePermissions WHERE roleId = :roleId AND name = 'showUsersList'");
+        $data = array("roleId" => $roleId);
+        $statement->execute($data);
+        if ($statement->fetchColumn()){
+            return true;
+        }
+        else return false;
+    }
+
+
+
 
     public function userPermitted($userId, $controller, $operation) {
         if (is_null($operation)) {

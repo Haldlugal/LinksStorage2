@@ -8,7 +8,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="/styles/style.css">
     <title><?=$this->head["title"]?></title>
 </head>
 <body class="bg-light">
@@ -17,19 +17,26 @@
         <div class="collapse navbar-collapse  justify-content-between" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item mx-2">
-                    <a class="nav-link" href="/">Main</a>
+                    <a class="nav-link btn btn-primary" href="/">Main</a>
                 </li>
-                <?php if($loggedIn):?>
+                <?php if(ServiceProvider::getService("Authorization")->isLoggedIn()):?>
                 <li class="nav-item mx-2">
                     <a class="nav-link btn btn-primary" href="/myLinks">My links</a>
                 </li>
+                <?php endif; ?>
+                <?php if(ServiceProvider::getService("Authentication")->canReadUsersList()):?>
                 <li class="nav-item mx-2">
                     <a class="nav-link btn btn-primary" href="/users">Users</a>
                 </li>
                 <?php endif;?>
+                <?php if (ServiceProvider::getService("Authorization")->isLoggedIn()):?>
+                <li class="nav-item mx-2">
+                    <a class="nav-link btn btn-primary" href="/link/create">Create Link</a>
+                </li>
+                <?php endif;?>
             </ul>
             <ul class="navbar-nav">
-                <?php if (!$loggedIn):?>
+                <?php if (!ServiceProvider::getService("Authorization")->isLoggedIn()):?>
                 <li class="nav-item mx-2">
                     <a class="nav-link" href="/register">Register</a>
                 </li>
