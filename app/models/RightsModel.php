@@ -29,7 +29,7 @@ class RightsModel
     }
 
     public function userPermittedToReadPrivateLinks($roleId) {
-        $statement = $this->pdo->prepare("SELECT COUNT(id) FROM rolePermissions WHERE roleId = :roleId AND name = 'showLinks' AND restrictions != 'nonPrivate'");
+        $statement = $this->pdo->prepare("SELECT COUNT(id) FROM rolePermissions WHERE roleId = :roleId AND name = 'showPrivateLinks'");
         $data = array("roleId" => $roleId);
         $statement->execute($data);
         if ($statement->fetchColumn()){

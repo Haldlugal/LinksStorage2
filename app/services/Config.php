@@ -20,6 +20,9 @@ class Config
 
     /*clear user links*/
     private $userActivationLinkClearTime = 5;
+
+    /*default pagination*/
+    private $paginationCount = 3;
     /**
      * @return string
      */
@@ -114,6 +117,14 @@ class Config
     public function getUserActivationLinkClearTime()
     {
         return $this->userActivationLinkClearTime;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPaginationCount()
+    {
+        return $this->paginationCount;
     }
 
 

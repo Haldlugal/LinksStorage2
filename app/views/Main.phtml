@@ -13,10 +13,6 @@
             $listGroupItem = "list-group-item-primary";
         }
         $counter ++;
-
-        if ($link["userId"] != $userId && !$showPrivateLinks && $link["private"] == 1) {
-            continue;
-        }
     ?>
     <li class="list-group-item list-group-item-action <?=$listGroupItem?> px-5">
         <a href='/link/read/<?=$link["id"]?>'><h4><?=$link["title"]?></h4></a>
@@ -30,8 +26,8 @@
     </li>
     <?php endforeach; ?>
 </ul>
-
-<nav aria-label="Page navigation example">
+<?=$data["pagination"];?>
+<!--<nav>
     <ul class="pagination  mt-4 px-5">
         <li class="page-item">
             <a class="page-link" href="#" aria-label="Previous">
@@ -48,3 +44,4 @@
         </li>
     </ul>
 </nav>
+-->

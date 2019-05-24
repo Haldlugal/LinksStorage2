@@ -12,7 +12,8 @@ class DefaultServiceConfig {
             "Authentication" => "AuthenticationService",
             "AccessControl" => "AccessControlService",
             "Config" => "Config",
-            "Data" => "DataService"
+            "Data" => "DataService",
+            "Pagination" => "PaginationService"
         ];
     }
 }
