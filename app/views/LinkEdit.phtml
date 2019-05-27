@@ -22,6 +22,9 @@
             <label class="form-check-label" for="privacy">Privacy</label>
         </div>
         <button class="btn btn-primary" type="submit">Edit Link</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal" data-url="/link/delete/<?=$data["linkId"]?>">
+            Delete Link
+        </button>
     </form>
     <?php if ($data["errorMessage"]!=""): ?>
         <div class="alert alert-danger" role="alert">
@@ -29,3 +32,35 @@
         </div>
     <?php endif; ?>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirm deleting link</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure, you want to delete this link?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var url = button.data('url');
+        var deleteButton = $(".delete-btn");
+        deleteButton.on('click', function(){
+            location.replace(url);
+        });
+    })
+</script>

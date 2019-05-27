@@ -29,7 +29,6 @@ class UserController extends CommonController
         }
 
         if ($params["operation"] == "delete") {
-            var_dump($params);
             $linkModel = new LinkModel();
             $linkModel->clearUsersLinks($params["data"]);
             $userModel->deleteUser($params["data"]);
