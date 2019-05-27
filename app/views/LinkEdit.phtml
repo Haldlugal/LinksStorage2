@@ -3,6 +3,7 @@
 <div class="editLinkPage px-5 py-4 col-md-4">
     <form class="mb-3" method="post">
         <input type="hidden" name="linkId" value="<?=$data["linkId"]?>">
+        <input type="hidden" name="pastLinkUrl" value="<?=$data["url"]?>">
         <div class="form-group ">
             <label for="linkTitle">Title</label>
             <input id="linkTitle" class="form-control" type="text" name="linkTitle" value="<?=$data["title"]?>" required>
@@ -13,7 +14,7 @@
         </div>
         <div class="form-group ">
             <label for="linkDescription">Description</label>
-            <textarea id="linkDescription" class="form-control" name="linkDescription" rows="3" required><?=$data["description"]?></textarea>
+            <textarea id="linkDescription" class="form-control" name="linkDescription" rows="3"><?=$data["description"]?></textarea>
         </div>
         <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="privacy" name="linkPrivacy"
@@ -22,4 +23,9 @@
         </div>
         <button class="btn btn-primary" type="submit">Edit Link</button>
     </form>
+    <?php if ($data["errorMessage"]!=""): ?>
+        <div class="alert alert-danger" role="alert">
+            <?=$data["errorMessage"]?>
+        </div>
+    <?php endif; ?>
 </div>

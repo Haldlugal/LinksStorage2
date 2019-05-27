@@ -14,8 +14,6 @@ class IndexController extends CommonController {
         $userInfo = $authorization->getUserInfo();
         $userRoleInfo = $authentication->getRoleInfo();
 
-
-
         if ($params["operation"] == "myLinks") {
             $links = $linkModel->getLinksListByUserId($userInfo["id"]);
         }

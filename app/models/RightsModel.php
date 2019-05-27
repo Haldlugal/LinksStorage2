@@ -55,6 +55,23 @@ class RightsModel
         }
     }
 
+    public function userPermittedToEditUser($roleId) {
+        $statement = $this->pdo->prepare("SELECT * FROM rolePermissions WHERE roleId = :roleId AND name LIKE 'editUsers%'");
+        $data = array("roleId" => $roleId);
+        $statement->execute($data);
+        $row = $statement->fetch();
+        $permission = explode("::", $row["name"]);
+        if ($permission[0]=="") {
+            return "notPermitted";
+        }
+        else if($permission[1]=="own") {
+            return "own";
+        }
+        else {
+            return "any";
+        }
+    }
+
     public function userPermittedToDeleteLink($roleId) {
         $statement = $this->pdo->prepare("SELECT * FROM rolePermissions WHERE roleId = :roleId AND name LIKE 'deleteLinks%'");
         $data = array("roleId" => $roleId);
@@ -82,8 +99,11 @@ class RightsModel
         else return false;
     }
 
-
-
+    public function getRoles() {
+        $statement = $this->pdo->prepare("SELECT * FROM roles");
+        $statement->execute();
+        return $statement->fetchAll();
+    }
 
     public function userPermitted($userId, $controller, $operation) {
         if (is_null($operation)) {

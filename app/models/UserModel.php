@@ -16,14 +16,37 @@ class UserModel
         $statement->execute($userData);
     }
 
-    public function deleteUser() {
-
+    public function deleteUser($userId) {
+        $statement = $this->pdo->prepare("DELETE FROM users WHERE id = :userId");
+        $data = array("userId" => $userId);
+        $statement->execute($data);
     }
 
-    public function editUser() {
+    public function editUser($userId, $login, $firstName, $lastName, $password, $email, $roleId, $approved) {
+        if ($password == "") {
+            $statement = $this->pdo->prepare("UPDATE users SET login = :login, firstName = :firstName, lastName = :lastName, email = :email, roleId = :roleId, approved = :approved WHERE id = :userId");
+            $data = array("userId" => $userId, "login" => $login, "firstName" => $firstName, "lastName" => $lastName, "email" => $email,
+                "roleId" => $roleId, "approved" => $approved);
+        }
+        else {
+            $statement = $this->pdo->prepare("UPDATE users SET login = :login, firstName = :firstName, lastName = :lastName, email = :email,
+            password = :password, roleId = :roleId, approved = :approved WHERE id = :userId");
+            $data = array("userId" => $userId, "login" => $login, "firstName" => $firstName, "lastName" => $lastName, "email" => $email,
+                "password" => $password, "roleId" => $roleId, "approved" => $approved);
+        }
 
+        $statement->execute($data);
     }
 
+    public function loginExists($login) {
+        $statement = $this->pdo->prepare("SELECT COUNT(id) FROM users WHERE login = :login");
+        $data = array("login" => $login);
+        $statement->execute($data);
+        if ($statement->fetchColumn()){
+            return true;
+        }
+        else return false;
+    }
     public function selectUserById($userId) {
         $statement = $this->pdo->prepare("SELECT * FROM users WHERE id = :userId");
         $userData = array("userId" => $userId);
@@ -32,10 +55,10 @@ class UserModel
         return $row;
     }
 
-
-
     public function selectUsersList() {
-
+        $statement = $this->pdo->prepare("SELECT * FROM users");
+        $statement->execute();
+        return $statement->fetchAll();
     }
 
     public function checkUser($login, $password) {
@@ -47,16 +70,6 @@ class UserModel
             return $row;
         }
         else return 0;
-    }
-
-    public function loginExists($login) {
-        $countLoginStatement = $this->pdo->prepare("SELECT COUNT(login) FROM users WHERE login = :login");
-        $userData = array("login" => $login);
-        $countLoginStatement->execute($userData);
-        if ($countLoginStatement->fetchColumn()) {
-            return true;
-        }
-        else return false;
     }
 
     public function emailExists($email) {

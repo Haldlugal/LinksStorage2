@@ -70,4 +70,19 @@ class AuthenticationService
         $rightsModel = new RightsModel();
         return $rightsModel->userPermittedToReadUsersList($this->userInfo["roleId"]);
     }
+
+    public function canEditThisUser($userId) {
+        $rightsModel = new RightsModel();
+        $rightToEdit = $rightsModel->userPermittedToEditUser($this->userInfo["roleId"]);
+        if ($rightToEdit == "any") {
+            return true;
+        }
+        else if ($rightToEdit == "own") {
+            if($this->userInfo["id"] == $userId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

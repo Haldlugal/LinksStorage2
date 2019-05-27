@@ -31,6 +31,16 @@ class LinkModel {
         return $selectLinksStatement->fetchAll();
     }
 
+    public function isLinkUnique($userId, $linkUrl) {
+        $statement = $this->pdo->prepare("SELECT COUNT(id) FROM links WHERE userId = :userId AND url = :linkUrl");
+        $data = array("userId" => $userId, "linkUrl" => $linkUrl);
+        $statement->execute($data);
+        if ($statement->fetchColumn()){
+            return false;
+        }
+        else return true;
+    }
+
     public function editLink($id, $title, $url, $description, $privacy) {
         if ($privacy!=0) {
             $privacy = 1;
@@ -50,5 +60,11 @@ class LinkModel {
         $createLinkStatement = $this->pdo->prepare("INSERT INTO links (userId, title, description, url, private) VALUES (:userId, :title, :description, :url, :private)");
         $data = array("userId"=>$userId, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
         $createLinkStatement->execute($data);
+    }
+
+    public function clearUsersLinks($userId) {
+        $statement = $this->pdo->prepare("UPDATE links SET userId = 1 WHERE userId = :userId");
+        $data = array("userId" => $userId);
+        $statement->execute($data);
     }
 }
