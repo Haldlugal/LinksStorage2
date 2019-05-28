@@ -26,7 +26,7 @@
                 </li>
                 <?php if(ServiceProvider::getService("Authorization")->isLoggedIn()):?>
                 <li class="nav-item mx-2">
-                    <a class="btn btn-primary" href="/myLinks">My links</a>
+                    <a class="btn btn-primary" href="/showMyLinks">My links</a>
                 </li>
                 <?php endif; ?>
                 <?php if(ServiceProvider::getService("Authentication")->canReadUsersList()):?>

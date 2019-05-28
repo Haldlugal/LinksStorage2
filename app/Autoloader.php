@@ -26,7 +26,7 @@ class Autoloader
             }
         }
         catch (MissingControllerException $exception) {
-            //App::redirect("error");
+            App::redirect("error/404");
         }
     }
 }

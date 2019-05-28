@@ -9,22 +9,26 @@ class UserController extends CommonController
         $userModel = new UserModel();
         $rightsModel = new RightsModel();
         $data = ServiceProvider::getService("Data");
+        $authentication = ServiceProvider::getService("Authentication");
 
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
             if ($params["operation"] == "edit") {
                 if ($_POST["approved"] == "on") {
                     $approved = 1;
                 } else $approved = 0;
-                if ($_POST["pastUserLogin"] == $_POST["login"] || !$userModel->loginExists($_POST["login"])) {
-                    if (ServiceProvider::getService("Authentication")->canEditThisUser($_POST["id"])) {
-                        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-                        $userModel->editUser($_POST["userId"], $_POST["login"], $_POST["firstName"], $_POST["lastName"], $password,
-                            $_POST["email"], $_POST["roleId"], $approved );
-                    }
-                    App::redirect("users");
-                } else {
-                    $data->setData("errorMessage", "User with such login already exists");
+
+                if (ServiceProvider::getService("Authentication")->canEditThisUser($_POST["userId"])) {
+                    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+                    $userModel->editUser($_POST["userId"], $_POST["login"], $_POST["firstName"], $_POST["lastName"], $password,
+                        $_POST["email"], $_POST["roleId"], $approved );
                 }
+                if ($authentication->canEditOtherUsers()) {
+                    App::redirect("users");
+                }
+                else {
+                    App::redirect("");
+                }
+
             }
         }
 
@@ -33,6 +37,9 @@ class UserController extends CommonController
             $linkModel->clearUsersLinks($params["data"]);
             $userModel->deleteUser($params["data"]);
             App::redirect("users");
+        }
+        if (!ServiceProvider::getService("Authentication")->canEditThisUser($params["data"])) {
+            App::redirect("error");
         }
         $user = $userModel->selectUserById($params["data"]);
         $roles = $rightsModel->getRoles();
@@ -45,6 +52,7 @@ class UserController extends CommonController
         $data->setData("roleId", $user["roleId"]);
         $data->setData("approved", $user["approved"]);
         $data->setData("roles", $roles);
+        $data->setData("canEditOtherUsers", $authentication->canEditOtherUsers());
 
         $this->head = array("title" => "Edit user", "description" => "Edit User");
         $this->view = "UserEdit";

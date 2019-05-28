@@ -3,11 +3,8 @@
 
 abstract class CommonController
 {
-    protected $data = array();
     protected $view = "";
     protected $head = array("title" => "", "description" => "");
-
-    abstract function process($params);
 
     public function renderView() {
         require("app/views/Header.phtml");

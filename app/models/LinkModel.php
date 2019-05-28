@@ -11,21 +11,52 @@ class LinkModel {
         $this->pdo = $database->getConnection();
     }
 
-    public function getLink ($id) {
+    public function get ($id) {
         $selectLinkStatement = $this->pdo->prepare("SELECT * FROM links WHERE id = :linkId");
         $linkData = array("linkId"=>$id);
         $selectLinkStatement->execute($linkData);
         return $selectLinkStatement->fetch();
     }
 
-    public function getLinksList() {
+    public function edit($id, $title, $url, $description, $privacy) {
+        if ($privacy=="on") {
+            $privacy = 1;
+        }
+        else {
+            $privacy = 0;
+        }
+        $editLinkStatement = $this->pdo->prepare("UPDATE links SET title = :title, url = :url, description = :description, private = :private  WHERE id = :linkId");
+        $linkData = array("linkId" => $id, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
+        $editLinkStatement->execute($linkData);
+    }
+
+    public function create($userId, $title, $url, $description, $privacy) {
+        if ($privacy=="on") {
+            $privacy = 1;
+        }
+        else {
+            $privacy = 0;
+        }
+        $createLinkStatement = $this->pdo->prepare("INSERT INTO links (userId, title, description, url, private) VALUES (:userId, :title, :description, :url, :private)");
+        $data = array("userId"=>$userId, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
+        $createLinkStatement->execute($data);
+    }
+
+    public function delete($id) {
+        $deleteLinkStatement = $this->pdo->prepare("DELETE FROM links WHERE id = :linkId");
+        $linkData = array("linkId"=>$id);
+        $deleteLinkStatement->execute($linkData);
+    }
+
+
+    public function getList() {
         $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links ORDER BY dateCreated DESC");
         $selectLinksStatement->execute();
         return $selectLinksStatement->fetchAll();
     }
 
-    public function getLinksListByUserId($userId) {
-        $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links WHERE userId = :userId");
+    public function getListByUserId($userId) {
+        $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links WHERE userId = :userId ORDER BY dateCreated DESC");
         $data = array("userId" => $userId);
         $selectLinksStatement->execute($data);
         return $selectLinksStatement->fetchAll();
@@ -41,26 +72,11 @@ class LinkModel {
         else return true;
     }
 
-    public function editLink($id, $title, $url, $description, $privacy) {
-        if ($privacy!=0) {
-            $privacy = 1;
-        }
-        $editLinkStatement = $this->pdo->prepare("UPDATE links SET title = :title, url = :url, description = :description, private = :private  WHERE id = :linkId");
-        $linkData = array("linkId" => $id, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
-        $editLinkStatement->execute($linkData);
-    }
 
-    public function deleteLink($id) {
-        $deleteLinkStatement = $this->pdo->prepare("DELETE FROM links WHERE id = :linkId");
-        $linkData = array("linkId"=>$id);
-        $deleteLinkStatement->execute($linkData);
-    }
 
-    public function createLink($userId, $title, $url, $description, $privacy) {
-        $createLinkStatement = $this->pdo->prepare("INSERT INTO links (userId, title, description, url, private) VALUES (:userId, :title, :description, :url, :private)");
-        $data = array("userId"=>$userId, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
-        $createLinkStatement->execute($data);
-    }
+
+
+
 
     public function clearUsersLinks($userId) {
         $statement = $this->pdo->prepare("UPDATE links SET userId = 1 WHERE userId = :userId");

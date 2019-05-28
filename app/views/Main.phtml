@@ -68,9 +68,9 @@
 
 <script>
     $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var url = button.data('url');
-        var deleteButton = $(".delete-btn");
+        let button = $(event.relatedTarget);
+        let url = button.data('url');
+        let deleteButton = $(".delete-btn");
         deleteButton.on('click', function(){
             location.replace(url);
         });

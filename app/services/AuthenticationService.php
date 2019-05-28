@@ -10,19 +10,19 @@ class AuthenticationService
     {
         $authorization = ServiceProvider::getService("Authorization");
         $this->userInfo = $authorization->getUserInfo();
-
-        /*$this->roleInfo["showPrivateLinks"] = $rightsModel->userPermittedToReadPrivateLinks($userRoleId);
-        $this->roleInfo["editLinks"] = $rightsModel->userPermittedToEditLink($userRoleId);
-        $this->roleInfo["deleteLinks"] = $rightsModel->userPermittedToDeleteLink($userRoleId);*/
-
     }
 
-    /**
-     * @return void
-     */
     public function getRoleInfo()
     {
         return $this->roleInfo;
+    }
+
+    public function canEditOtherUsers() {
+        $rightsModel = new RightsModel();
+        if ($rightsModel->userPermittedToEditUser($this->userInfo["roleId"]) == "any") {
+            return true;
+        }
+        else return false;
     }
 
     /*returns any, own or no*/
@@ -38,7 +38,7 @@ class AuthenticationService
 
     public function canEditThisLink($linkId) {
         $linkModel = new LinkModel();
-        $linkInfo = $linkModel->getLink($linkId);
+        $linkInfo = $linkModel->get($linkId);
         $canEditLinks = $this->canEditLinks();
         if ($canEditLinks == "any"){
             return true;
@@ -50,7 +50,7 @@ class AuthenticationService
     }
     public function canDeleteThisLink($linkId) {
         $linkModel = new LinkModel();
-        $linkInfo = $linkModel->getLink($linkId);
+        $linkInfo = $linkModel->get($linkId);
         $canDeleteLinks = $this->canDeleteLinks();
         if ($canDeleteLinks == "any"){
             return true;
@@ -82,7 +82,19 @@ class AuthenticationService
                 return true;
             }
         }
-
         return false;
+    }
+
+    public function canReadThisLink($linkId) {
+        if ($this->hasPrivateLinksAccess()) {
+            return true;
+        }
+        $linkModel = new LinkModel();
+        $linkInfo = $linkModel->get($linkId);
+        $isLinkPrivate = $linkInfo["private"];
+        if ($isLinkPrivate && $linkInfo["userId"]==$this->userInfo["id"]) {
+            return true;
+        }
+        else return false;
     }
 }

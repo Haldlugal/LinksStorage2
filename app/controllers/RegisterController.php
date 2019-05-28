@@ -11,9 +11,6 @@ class RegisterController extends CommonController {
             if ($userModel->loginExists($_POST["login"])){
                 $data->setData("errorMessage", "User with such login: ".$_POST["login"]." already exists");
             }
-            /*else if ($userModel->emailExists($_POST['email'])) {
-                $data->setData("errorMessage", "User with such email: ".$_POST["email"]." already exists");
-            }*/
             else {
                 $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
                 $verificationText = md5(rand(0, 10000));

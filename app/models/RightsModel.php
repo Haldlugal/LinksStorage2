@@ -115,6 +115,7 @@ class RightsModel
         if ($checkGeneralAccessStatement->rowCount()>0) {
             return true;
         }
+
         if ($userId !=0) {
             $selectUserStatement = $this->pdo->prepare("SELECT roleId FROM users WHERE id = :userId");
             $userData = array("userId" => $userId);

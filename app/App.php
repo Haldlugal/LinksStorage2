@@ -1,48 +1,46 @@
 <?php
-
-    require_once "Preload.php";
-
+require_once "Autoloader.php";
+require_once "ServiceProvider.php";
+require_once "configs/DefaultServiceConfig.php";
 class App {
 
     public function run() {
-
-        Preload::run();
-        ServiceProvider::setService("Database", function(){
-            $settings = [
-                "host" => "localhost",
-                "login" => "root",
-                "password" => "R00twala",
-                "dbName" => "linkstorage"
-            ];
-            return new PDOService($settings);
-        });
-
         $router = ServiceProvider::getService("Router");
-
         $data = $router->run();
 
         if ($data["controller"] == "Controller") {
             $data["controller"] = "IndexController";
         }
-        else if ($data["controller"] == "MyLinksController") {
+        else if ($data["controller"] == "ShowMyLinksController") {
             $data["controller"] = "IndexController";
-            $data["operation"] = "myLinks";
+            $data["operation"] = "showMyLinks";
         }
 
         $controller = new $data["controller"];
 
+        if ($data["operation"] == "") {
+            $controller($data);
+        }
+        else {
+            call_user_func(array($controller, $data["operation"]),$data["data"]);
+        }
         /*$accessControl = ServiceProvider::getService("AccessControl");
-        $accessControl->checkUserRights($_SESSION["userId"], $data["controller"], $data["operation"]);*/
+        if (!$accessControl->checkUserRights($_SESSION["userId"], $data["controller"], $data["operation"])) {
 
-        $controller->process($data);
+            self::redirect("error/403");
+        }*/
+    }
 
+    public function boot() {
+        error_reporting(E_ALL & ~E_NOTICE);
+        mb_internal_encoding("UTF-8");
+        session_start();
+        Autoloader::run();
+        ServiceProvider::setDefaultServices();
     }
 
     public static function redirect($url) {
         header("Location: /$url");
         exit;
     }
-
 }
-
-class MissingClassException extends Exception { }

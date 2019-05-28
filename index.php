@@ -2,4 +2,5 @@
 require_once "app/App.php";
 
     $app = new App();
+    $app->boot();
     $app->run();

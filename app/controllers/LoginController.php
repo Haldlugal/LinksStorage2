@@ -17,7 +17,7 @@ class LoginController extends CommonController {
                 $data->setData("successMessage", "Your activation link was resend to your email");
             }
             else if ($userInfo["approved"] != 0) {
-                $data->setData("errorMessage", "Your email is already approved");
+                $data->setData("errorMessage", "Your account is already approved");
             }
             else if ($userInfo["verificationText"] != "") {
                 $data->setData("errorMessage", "Please, check your email for activation link");
