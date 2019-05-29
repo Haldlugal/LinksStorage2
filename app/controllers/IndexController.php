@@ -1,7 +1,7 @@
 <?php
 
 
-class IndexController extends CommonController {
+class IndexController extends ElementsController {
 
     private $linkModel;
     private $userInfo;
@@ -21,7 +21,7 @@ class IndexController extends CommonController {
         $this->head = array("title" => "Main page", "description" => "Main");
 
         $allLinks = $this->linkModel->getList();
-        $canReadPrivate = ServiceProvider::getService("Authentication")->hasPrivateLinksAccess();
+        /*$canReadPrivate = ServiceProvider::getService("Authentication")->hasPrivateLinksAccess();
         $links = array();
         foreach($allLinks as $link) {
             if ($link["private"] == true && ($link["userId"] == $userInfo["id"] || $canReadPrivate == true)) {
@@ -30,13 +30,15 @@ class IndexController extends CommonController {
             else if ($link["private"] ==false){
                 array_push($links, $link);
             }
-        }
+        }*/
 
+        $pagination =  $this->getPagination($allLinks);
+        $linksToShow = $this->getElementsToShow($allLinks);
         $this->data->setData("pagination", $pagination);
-        $this->data->setData("canEditLinks", $userRoleInfo["editLinks"]);
-        $this->data->setData("canDeleteLinks", $userRoleInfo["deleteLinks"]);
-        $this->data->setData("userId", $userInfo["id"]);
-        $this->data->setData("links", $links);
+        //$this->data->setData("canEditLinks", $userRoleInfo["editLinks"]);
+        //$this->data->setData("canDeleteLinks", $userRoleInfo["deleteLinks"]);
+        $this->data->setData("userId", $this->userInfo["id"]);
+        $this->data->setData("links", $linksToShow);
 
         $this->view = "Main";
 
@@ -44,12 +46,12 @@ class IndexController extends CommonController {
     }
 
     public function showMyLinks() {
-        var_dump("her");
         $this->head = array("title" => "My Links", "description" => "Main");
         $links = $this->linkModel->getListByUserId($this->userInfo["id"]);
-        $paginator =  $this->getPagination($links);
-        $pagination = $paginator["pagination"];
-        $linksToShow = $paginator["linksToShow"];
+
+        $pagination =  $this->getPagination($links);
+        $linksToShow = $this->getElementsToShow($links);
+
         $this->data->setData("pagination", $pagination);
         $this->data->setData("canEditLinks", $this->userRoleInfo["editLinks"]);
         $this->data->setData("canDeleteLinks", $this->userRoleInfo["deleteLinks"]);
@@ -61,20 +63,10 @@ class IndexController extends CommonController {
         $this->renderView();
     }
 
-    private function getPagination($links) {
-        $page = $_GET["page"];
-        $elementsOnPage = $_GET["elementsOnPage"];
 
-        if ($page == "") {
-            $page = 1;
-        }
-        if ($elementsOnPage == "") {
-            $elementsOnPage = ServiceProvider::getService("Config")->getPaginationCount();
-        }
-        $linksToShow = array_slice($links, ($page-1)*$elementsOnPage, $elementsOnPage);
-        $pagination = ServiceProvider::getService("Pagination")->generatePagination(count($links), $elementsOnPage, $page);
-        return array("pagination" => $pagination, "linksToShow" => $linksToShow);
-    }
+
+
+
 
 
 }

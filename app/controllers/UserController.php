@@ -3,59 +3,47 @@
 
 class UserController extends CommonController
 {
-
-    function process($params)
+    private $data;
+    private $userModel;
+    public function __construct()
     {
-        $userModel = new UserModel();
-        $rightsModel = new RightsModel();
-        $data = ServiceProvider::getService("Data");
-        $authentication = ServiceProvider::getService("Authentication");
+        $this->userModel = new UserModel();
+        $this->data = ServiceProvider::getService("Data");
+    }
 
+    public function edit($userId) {
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
-            if ($params["operation"] == "edit") {
-                if ($_POST["approved"] == "on") {
-                    $approved = 1;
-                } else $approved = 0;
-
-                if (ServiceProvider::getService("Authentication")->canEditThisUser($_POST["userId"])) {
-                    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-                    $userModel->editUser($_POST["userId"], $_POST["login"], $_POST["firstName"], $_POST["lastName"], $password,
-                        $_POST["email"], $_POST["roleId"], $approved );
-                }
-                if ($authentication->canEditOtherUsers()) {
-                    App::redirect("users");
-                }
-                else {
-                    App::redirect("");
-                }
-
-            }
+            $this->userModel->edit(array("userId"=>$_POST["userId"],
+                "login" => $_POST["login"],
+                "firstName" => $_POST["firstName"],
+                "lastName" => $_POST["lastName"],
+                "password" => $_POST["password"],
+                "email" => $_POST["email"],
+                "roleId" => $_POST["roleId"],
+                "approved" => $_POST["approved"]));
         }
-
-        if ($params["operation"] == "delete") {
-            $linkModel = new LinkModel();
-            $linkModel->clearUsersLinks($params["data"]);
-            $userModel->deleteUser($params["data"]);
-            App::redirect("users");
-        }
-        if (!ServiceProvider::getService("Authentication")->canEditThisUser($params["data"])) {
-            App::redirect("error");
-        }
-        $user = $userModel->selectUserById($params["data"]);
+        $user = $this->userModel->selectById($userId);
+        $rightsModel = new RightsModel();
         $roles = $rightsModel->getRoles();
 
-        $data->setData("id", $user["id"]);
-        $data->setData("login", $user["login"]);
-        $data->setData("email", $user["email"]);
-        $data->setData("firstName", $user["firstName"]);
-        $data->setData("lastName", $user["lastName"]);
-        $data->setData("roleId", $user["roleId"]);
-        $data->setData("approved", $user["approved"]);
-        $data->setData("roles", $roles);
-        $data->setData("canEditOtherUsers", $authentication->canEditOtherUsers());
+        $this->data->setData("id", $user["id"]);
+        $this->data->setData("login", $user["login"]);
+        $this->data->setData("email", $user["email"]);
+        $this->data->setData("firstName", $user["firstName"]);
+        $this->data->setData("lastName", $user["lastName"]);
+        $this->data->setData("roleId", $user["roleId"]);
+        $this->data->setData("approved", $user["approved"]);
+        $this->data->setData("roles", $roles);
 
         $this->head = array("title" => "Edit user", "description" => "Edit User");
         $this->view = "UserEdit";
         $this->renderView();
+    }
+
+    public function delete($userId) {
+        $linkModel = new LinkModel();
+        $linkModel->clearUsersLinks($userId);
+        $this->userModel->delete($userId);
+        App::redirect("users");
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 
-class LinkController extends CommonController {
+class LinkController extends ElementsController {
 
     public function read($linkId) {
         $this->head = array("title" => "Read link", "description" => "Link");

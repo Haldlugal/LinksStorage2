@@ -3,7 +3,7 @@
 
 class LogoutController extends CommonController {
 
-    function process($params)
+    function __invoke()
     {
         $_SESSION["userId"] = 0;
         App::redirect("");

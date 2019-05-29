@@ -10,32 +10,61 @@ class UserModel
         $this->pdo = $database->getConnection();
     }
 
-    public function addUser($userData) {
+    public function create($userData) {
         $statement = $this->pdo->prepare("INSERT INTO users (login, firstName, lastName, password, email, verificationText)
                 VALUES (:login, :firstName,:lastName, :password, :email, :verificationText)");
         $statement->execute($userData);
     }
 
-    public function deleteUser($userId) {
+    public function delete($userId) {
         $statement = $this->pdo->prepare("DELETE FROM users WHERE id = :userId");
         $data = array("userId" => $userId);
         $statement->execute($data);
     }
 
-    public function editUser($userId, $login, $firstName, $lastName, $password, $email, $roleId, $approved) {
-        if ($password == "") {
+    public function edit($userData) {
+        if ($userData["approved"] == "on") {
+            $userData["approved"] = 1;
+        } else $userData["approved"] = 0;
+
+        if ($userData["password"] == "") {
             $statement = $this->pdo->prepare("UPDATE users SET login = :login, firstName = :firstName, lastName = :lastName, email = :email, roleId = :roleId, approved = :approved WHERE id = :userId");
-            $data = array("userId" => $userId, "login" => $login, "firstName" => $firstName, "lastName" => $lastName, "email" => $email,
-                "roleId" => $roleId, "approved" => $approved);
+            $data = array("userId" => $userData["userId"], "login" => $userData["login"], "firstName" => $userData["firstName"], "lastName" => $userData["lastName"], "email" => $userData["email"],
+                "roleId" => $userData["roleId"], "approved" => $userData["approved"]);
         }
         else {
+            $userData["password"] = password_hash($_POST['password'], PASSWORD_BCRYPT);
             $statement = $this->pdo->prepare("UPDATE users SET login = :login, firstName = :firstName, lastName = :lastName, email = :email,
             password = :password, roleId = :roleId, approved = :approved WHERE id = :userId");
-            $data = array("userId" => $userId, "login" => $login, "firstName" => $firstName, "lastName" => $lastName, "email" => $email,
-                "password" => $password, "roleId" => $roleId, "approved" => $approved);
+            $data = $userData;
         }
 
         $statement->execute($data);
+    }
+
+    public function selectById($userId) {
+        $statement = $this->pdo->prepare("SELECT * FROM users WHERE id = :userId");
+        $userData = array("userId" => $userId);
+        $statement->execute($userData);
+        $row = $statement->fetch();
+        return $row;
+    }
+
+    public function selectList() {
+        $statement = $this->pdo->prepare("SELECT * FROM users");
+        $statement->execute();
+        return $statement->fetchAll();
+    }
+
+    public function checkLogin($login, $password) {
+        $selectPasswordStatement = $this->pdo->prepare("SELECT * FROM users WHERE login = :login");
+        $userData = array("login" => $login);
+        $selectPasswordStatement->execute($userData);
+        $row = $selectPasswordStatement->fetch();
+        if (password_verify($password, $row["password"])) {
+            return $row;
+        }
+        else return 0;
     }
 
     public function loginExists($login) {
@@ -47,31 +76,6 @@ class UserModel
         }
         else return false;
     }
-    public function selectUserById($userId) {
-        $statement = $this->pdo->prepare("SELECT * FROM users WHERE id = :userId");
-        $userData = array("userId" => $userId);
-        $statement->execute($userData);
-        $row = $statement->fetch();
-        return $row;
-    }
-
-    public function selectUsersList() {
-        $statement = $this->pdo->prepare("SELECT * FROM users");
-        $statement->execute();
-        return $statement->fetchAll();
-    }
-
-    public function checkUser($login, $password) {
-        $selectPasswordStatement = $this->pdo->prepare("SELECT * FROM users WHERE login = :login");
-        $userData = array("login" => $login);
-        $selectPasswordStatement->execute($userData);
-        $row = $selectPasswordStatement->fetch();
-        if (password_verify($password, $row["password"])) {
-            return $row;
-        }
-        else return 0;
-    }
-
     public function emailExists($email) {
         $countMailStatement = $this->pdo->prepare("SELECT COUNT(login) FROM users WHERE email = :email");
         $userData = array("email" => $email);

@@ -2,34 +2,43 @@
 
 class RegisterController extends CommonController {
 
-    function process($params) {
-        $data = ServiceProvider::getService("Data");
+    private $data;
+    private $userModel;
 
+    public function __construct()
+    {
+        $this->data = ServiceProvider::getService("Data");
+        $this->userModel = new UserModel();
+    }
+
+    function __invoke() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $userModel = new UserModel();
+            $this->userModel = new UserModel();
 
-            if ($userModel->loginExists($_POST["login"])){
-                $data->setData("errorMessage", "User with such login: ".$_POST["login"]." already exists");
+            if ($this->userModel->loginExists($_POST["login"])){
+                $this->data->setData("errorMessage", "User with such login: ".$_POST["login"]." already exists");
             }
             else {
-                $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-                $verificationText = md5(rand(0, 10000));
-                $userData = array("login" => $_POST["login"],
-                    "firstName" => $_POST["firstName"],
-                    "lastName" => $_POST["lastName"],
-                    "email" => $_POST["email"],
-                    "password" => $password,
-                    "verificationText" => $verificationText);
-                $userModel->addUser($userData);
-                ServiceProvider::getService("Mailer")->sendRegistrationMail($_POST["email"], $verificationText);
-                $data->setData("successMessage", "Confirmation email has been sent to you");
+                $this->registerUser();
+                $this->data->setData("successMessage", "Confirmation email has been sent to you");
             }
         }
-
         $this->head = array("title" => "Register page", "description" => "Register");
-
         $this->view = "Register";
         $this->renderView();
+    }
+
+    private function registerUser() {
+        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        $verificationText = md5(rand(0, 10000));
+        $userData = array("login" => $_POST["login"],
+            "firstName" => $_POST["firstName"],
+            "lastName" => $_POST["lastName"],
+            "email" => $_POST["email"],
+            "password" => $password,
+            "verificationText" => $verificationText);
+        $this->userModel->create($userData);
+        ServiceProvider::getService("Mailer")->sendRegistrationMail($_POST["email"], $verificationText);
     }
 }
 

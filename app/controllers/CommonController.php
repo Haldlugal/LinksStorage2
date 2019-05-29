@@ -1,7 +1,7 @@
 <?php
 
 
-abstract class CommonController
+class CommonController
 {
     protected $view = "";
     protected $head = array("title" => "", "description" => "");

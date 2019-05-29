@@ -1,27 +1,17 @@
 <?php
 
 
-class UsersController extends CommonController
+class UsersController extends ElementsController
 {
 
-    function process($params)
+    function __invoke()
     {
         $userModel = new UserModel();
-        $users = $userModel->selectUsersList();
+        $users = $userModel->selectList();
         $data = ServiceProvider::getService("Data");
-        $page = $_GET["page"];
-        $elementsOnPage = $_GET["elementsOnPage"];
 
-        if ($page == "") {
-            $page = 1;
-        }
-        if ($elementsOnPage == "") {
-            $elementsOnPage = ServiceProvider::getService("Config")->getPaginationCount();
-        }
-
-
-        $usersToShow = array_slice($users, ($page-1)*$elementsOnPage, $elementsOnPage);
-        $pagination = ServiceProvider::getService("Pagination")->generatePagination(count($users), $elementsOnPage, $page);
+        $pagination =  $this->getPagination($users);
+        $usersToShow = $this->getElementsToShow($users);
 
         $data->setData("users", $usersToShow);
         $data->setData("pagination", $pagination);

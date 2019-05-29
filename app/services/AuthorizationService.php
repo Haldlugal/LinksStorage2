@@ -8,7 +8,7 @@ class AuthorizationService
     public function __construct() {
         $userModel = new UserModel();
         if (self::isLoggedIn()) {
-            $this->userInfo = $userModel->selectUserById($_SESSION["userId"]);
+            $this->userInfo = $userModel->selectById($_SESSION["userId"]);
         }
     }
 

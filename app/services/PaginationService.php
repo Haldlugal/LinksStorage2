@@ -57,4 +57,8 @@ class PaginationService
 
         return $paginationString;
     }
+
+    public function getElementsToShow($elements, $elementsOnPage, $page) {
+        return array_slice($elements, ($page-1)*$elementsOnPage, $elementsOnPage);
+    }
 }
