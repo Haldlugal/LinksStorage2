@@ -13,6 +13,9 @@ if ($argv[1] == "migrate") {
 else if ($argv[1] == "add") {
     addMigration($argv[2]);
 }
+else if ($argv[1] == "remove") {
+    removeMigration($argv[2]);
+}
 
 
 function migrate() {
@@ -32,7 +35,16 @@ function migrate() {
 function addMigration($migrationName) {
     $database = ServiceProvider::getService("Database");
     $pdo = $database->getConnection();
-    $createLinkStatement = $pdo->prepare("INSERT INTO migrations (name) VALUES (:migrationName)");
+    $statement = $pdo->prepare("INSERT INTO migrations (name) VALUES (:migrationName)");
     $data = array("migrationName"=>$migrationName);
-    $createLinkStatement->execute($data);
+    $statement->execute($data);
+}
+
+function removeMigration($migrationName) {
+    $database = ServiceProvider::getService("Database");
+    $pdo = $database->getConnection();
+    $statement = $pdo->prepare("DELETE FROM migrations WHERE name = :migrationName");
+    $data = array("migrationName"=>$migrationName);
+    $statement->execute($data);
+
 }
