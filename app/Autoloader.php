@@ -27,6 +27,9 @@ class Autoloader
             else if (preg_match('/Policy$/', $class)) {
                 require("app/policies/" . $class . ".php");
             }
+            else if (preg_match('/Migration$/', $class)) {
+                require("app/migrations/" . $class . ".php");
+            }
         }
         catch (MissingControllerException $exception) {
             App::redirect("error404");

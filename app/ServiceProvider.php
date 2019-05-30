@@ -1,7 +1,5 @@
 <?php
 
-
-
 class ServiceProvider {
 
     public static $services = array();
