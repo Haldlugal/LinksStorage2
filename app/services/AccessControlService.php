@@ -4,8 +4,8 @@
 class AccessControlService
 {
     public function checkRights ($target, $action = "index", $data = "") {
-
         $target = ucwords($target);
+
 
         if (in_array($target."Policy", ServiceProvider::getService("Config")->getPolicies()) && file_exists("app/policies/$target"."Policy.php")) {
             return $this->checkPolicy($target, $action, $data);
@@ -32,6 +32,12 @@ class AccessControlService
         $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
         $rights = ServiceProvider::getService("Rights");
         return $rights->checkPermission($userInfo["roleId"], $target, $action);
+    }
+
+    public function registerPolicy($policyName) {
+        $policies = ServiceProvider::getService("Config")->getPolicies();
+        array_push($policies, $policyName);
+        ServiceProvider::getService("Config")->setPolicies($policies);
     }
 
     //TODO policy registering (policy has priority around db rights, so we should have option to register/unregister it)

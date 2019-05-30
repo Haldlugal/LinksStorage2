@@ -22,7 +22,7 @@ class Config
     private $userActivationLinkClearTime = 5;
 
     /*policies registered by default*/
-    private $policies = array("LinkPolicy");
+    private $policies = array("LinkPolicy", "UserPolicy");
 
     /*routing*/
     private $routing = array(
@@ -153,6 +153,14 @@ class Config
     public function getRouting()
     {
         return $this->routing;
+    }
+
+    /**
+     * @param array $policies
+     */
+    public function setPolicies($policies)
+    {
+        $this->policies = $policies;
     }
 
 

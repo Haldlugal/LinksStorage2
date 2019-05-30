@@ -1,9 +1,9 @@
 
-<?php $data = ServiceProvider::getService("Data")->getData(); ?>
+<?php $data = ServiceProvider::getService("Data")->getData();?>
 <?php if ($data["error"]): ?>
     <div class="alert alert-danger" role="alert"><?=$data["error"]?></div>
 <?php endif; ?>
 <?php if ($data["success"]): ?>
     <div class="alert alert-success" role="alert"><?=$data["success"]?></div>
 <?php endif; ?>
-<p class="px-4">Go to <a href="/login">login page</a></p>
+

@@ -9,17 +9,13 @@ class App {
         $router = ServiceProvider::getService("Router");
         $data = $router->run();
         $accessControl = ServiceProvider::getService("AccessControl");
+
         $controllerName = $data["controller"]."Controller";
         $controller = new $controllerName;
         if (!$accessControl->checkRights($data["controller"], $data["action"], $data["data"])) {
             self::redirect("error403");
         }
-
-
-
         call_user_func(array($controller, $data["action"]),$data["data"]);
-
-
     }
 
     public function boot() {

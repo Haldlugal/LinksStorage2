@@ -24,6 +24,7 @@ class RightsService
     }
     /*returns access level for target and operation for role*/
     public function checkAccessLevel($roleId, $target, $operation) {
+
         $statement = $this->pdo->prepare("SELECT access_level FROM rolePermissions WHERE roleId = :roleId AND target = :target AND operation = :operation");
         $data = array("roleId" => $roleId, "target" => $target, "operation" => $operation);
         $statement->execute($data);

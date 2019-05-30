@@ -3,16 +3,18 @@
 
 class VerifyController extends CommonController
 {
-    function index($userId)
+    function index()
     {
-        $data = ServiceProvider::getService("Data")->getData();
+        $data = ServiceProvider::getService("Data");
         $userModel = new UserModel();
-        if ($userModel->verifyUser($userId)>0){
-            $data["success"] = "Your account successfully approved";
+        $verificationText = $_GET["verificationText"];
+        if ($userModel->verifyUser($verificationText)>0){
+            $data->setData("success","Your account successfully approved" );
         }
         else {
-            $data["error"] = "You cannot approve account with that link, It is either invalid or too old.";
+            $data->setData("error", "You cannot approve account with that link, It is either invalid or too old.");
         }
+
         $this->view = "Verify";
         $this->renderView();
     }

@@ -7,6 +7,10 @@ class UserPolicy
         $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
         $rights = ServiceProvider::getService("Rights");
         $access = $rights->checkAccessLevel($userInfo["roleId"], "user", "edit");
+        $userModel = new UserModel();
+        if ($userModel->isAnonymous($userId)) {
+            return false;
+        }
         if ($access == "any"){
             return true;
         }

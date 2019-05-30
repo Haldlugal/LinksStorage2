@@ -50,6 +50,18 @@ class UserModel
         return $row;
     }
 
+    public function isAnonymous($userId) {
+        $statement =  $this->pdo->prepare("SELECT roles.name FROM users 
+            LEFT JOIN roles ON users.roleId = roles.id  
+            WHERE users.id = :userId");
+        $userData = array("userId" => $userId);
+        $statement->execute($userData);
+            if ($statement->fetch()["name"] == "anonymous"){
+                return true;
+            }
+            else return false;
+    }
+
     public function selectList() {
         $statement = $this->pdo->prepare("SELECT * FROM users");
         $statement->execute();

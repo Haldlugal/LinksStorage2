@@ -1,6 +1,6 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/services/vendor/autoload.php';
+require_once 'app/services/vendor/autoload.php';
 
 class MailerService {
 
@@ -56,7 +56,7 @@ class MailerService {
         $this->mail->addAddress($email);
         $this->mail->Subject = "Account verification from Blog";
         $this->mail->Body = "<p>Thanks for signing up!</p>
-        <p>Your account has been created. Please activate it using following link: <a href='http://linkstorage/verify/$verificationText'>http://linkstorage/verify/$verificationText</a></p>";
+        <p>Your account has been created. Please activate it using following link: <a href='http://linkstorage/verify/?verificationText=$verificationText'>http://linkstorage/verify/?verificationText=$verificationText</a></p>";
         try {
             $this->mail->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {

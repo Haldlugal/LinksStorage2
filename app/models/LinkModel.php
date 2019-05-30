@@ -90,7 +90,7 @@ class LinkModel {
     }
 
     public function clearUsersLinks($userId) {
-        $statement = $this->pdo->prepare("UPDATE links SET userId = 1 WHERE userId = :userId");
+        $statement = $this->pdo->prepare("UPDATE links SET userId = 1, private = 0 WHERE userId = :userId");
         $data = array("userId" => $userId);
         $statement->execute($data);
     }
