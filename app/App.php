@@ -5,30 +5,21 @@ require_once "configs/DefaultServiceConfig.php";
 class App {
 
     public function run() {
+
         $router = ServiceProvider::getService("Router");
         $data = $router->run();
-
-        if ($data["controller"] == "Controller") {
-            $data["controller"] = "IndexController";
-        }
-        else if ($data["controller"] == "ShowMyLinksController") {
-            $data["controller"] = "IndexController";
-            $data["operation"] = "showMyLinks";
+        $accessControl = ServiceProvider::getService("AccessControl");
+        $controllerName = $data["controller"]."Controller";
+        $controller = new $controllerName;
+        if (!$accessControl->checkRights($data["controller"], $data["action"], $data["data"])) {
+            self::redirect("error403");
         }
 
-        $controller = new $data["controller"];
 
-        if ($data["operation"] == "") {
-            $controller($data);
-        }
-        else {
-            call_user_func(array($controller, $data["operation"]),$data["data"]);
-        }
-        /*$accessControl = ServiceProvider::getService("AccessControl");
-        if (!$accessControl->checkUserRights($_SESSION["userId"], $data["controller"], $data["operation"])) {
 
-            self::redirect("error/403");
-        }*/
+        call_user_func(array($controller, $data["action"]),$data["data"]);
+
+
     }
 
     public function boot() {

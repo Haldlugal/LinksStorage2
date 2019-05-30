@@ -1,7 +1,7 @@
 <?php
 
 
-class UserController extends CommonController
+class UserController extends ElementsController
 {
     private $data;
     private $userModel;
@@ -9,6 +9,21 @@ class UserController extends CommonController
     {
         $this->userModel = new UserModel();
         $this->data = ServiceProvider::getService("Data");
+    }
+
+    function index()    {
+
+        $users = $this->userModel->selectList();
+
+        $pagination =  $this->getPagination($users);
+        $usersToShow = $this->getElementsToShow($users);
+
+        $this->data->setData("users", $usersToShow);
+        $this->data->setData("pagination", $pagination);
+
+        $this->head["title"] = "Users List";
+        $this->view = "UsersList";
+        $this->renderView();
     }
 
     public function edit($userId) {
@@ -21,11 +36,11 @@ class UserController extends CommonController
                 "email" => $_POST["email"],
                 "roleId" => $_POST["roleId"],
                 "approved" => $_POST["approved"]));
+            $this->data->setData("success", "User edited successfully");
         }
         $user = $this->userModel->selectById($userId);
-        $rightsModel = new RightsModel();
+        $rightsModel = new RightsService();
         $roles = $rightsModel->getRoles();
-
         $this->data->setData("id", $user["id"]);
         $this->data->setData("login", $user["login"]);
         $this->data->setData("email", $user["email"]);

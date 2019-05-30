@@ -48,7 +48,6 @@ class LinkModel {
         $deleteLinkStatement->execute($linkData);
     }
 
-
     public function getList() {
         $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links ORDER BY dateCreated DESC");
         $selectLinksStatement->execute();
@@ -62,7 +61,18 @@ class LinkModel {
         return $selectLinksStatement->fetchAll();
     }
 
-    public function isLinkUnique($userId, $linkUrl) {
+    public function getReadableList() {
+        $links = $this->getList();
+        $linksToShow = array();
+        foreach($links as $link) {
+            if (ServiceProvider::getService("AccessControl")->checkRights("link", "read", $link["id"])) {
+                array_push($linksToShow, $link);
+            }
+        }
+        return $linksToShow;
+    }
+
+    public function isUnique($userId, $linkUrl) {
         $statement = $this->pdo->prepare("SELECT COUNT(id) FROM links WHERE userId = :userId AND url = :linkUrl");
         $data = array("userId" => $userId, "linkUrl" => $linkUrl);
         $statement->execute($data);
@@ -72,11 +82,12 @@ class LinkModel {
         else return true;
     }
 
-
-
-
-
-
+    public function isPrivate($linkId) {
+        $selectLinkStatement = $this->pdo->prepare("SELECT private FROM links WHERE id = :linkId");
+        $linkData = array("linkId"=>$linkId);
+        $selectLinkStatement->execute($linkData);
+        $selectLinkStatement->fetchColumn();
+    }
 
     public function clearUsersLinks($userId) {
         $statement = $this->pdo->prepare("UPDATE links SET userId = 1 WHERE userId = :userId");

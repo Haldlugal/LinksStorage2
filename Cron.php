@@ -3,6 +3,7 @@ require_once "app/ServiceProvider.php";
 require_once "app/configs/DefaultServiceConfig.php";
 require_once "app/Autoloader.php";
 
+chdir("/vagrant/LinksStorage");
 Autoloader::run();
 ServiceProvider::setDefaultServices();
 

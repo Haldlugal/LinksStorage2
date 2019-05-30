@@ -21,6 +21,26 @@ class Config
     /*clear user links*/
     private $userActivationLinkClearTime = 5;
 
+    /*policies registered by default*/
+    private $policies = array("LinkPolicy");
+
+    /*routing*/
+    private $routing = array(
+        "" => array("controllerClass"=>"Link", "action" => "index"),
+        "ShowMy" => array("controllerClass" => "Link", "action" => "showMy"),
+        "Users" => array("controllerClass" => "User", "action" => "index"),
+        "Error404" => array("controllerClass" => "Error", "action" => "error404"),
+        "Error403" => array("controllerClass" => "Error", "action" => "error403")
+    );
+
+    /**
+     * @return array
+     */
+    public function getPolicies()
+    {
+        return $this->policies;
+    }
+
     /*default pagination*/
     private $paginationCount = 5;
     /**
@@ -125,6 +145,14 @@ class Config
     public function getPaginationCount()
     {
         return $this->paginationCount;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRouting()
+    {
+        return $this->routing;
     }
 
 

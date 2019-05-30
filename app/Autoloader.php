@@ -24,9 +24,12 @@ class Autoloader
             else if (preg_match('/Config$/', $class)) {
                 require("app/services/" . $class . ".php");
             }
+            else if (preg_match('/Policy$/', $class)) {
+                require("app/policies/" . $class . ".php");
+            }
         }
         catch (MissingControllerException $exception) {
-            App::redirect("error/404");
+            App::redirect("error404");
         }
     }
 }

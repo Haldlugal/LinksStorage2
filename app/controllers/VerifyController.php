@@ -3,7 +3,7 @@
 
 class VerifyController extends CommonController
 {
-    function __invoke($userId)
+    function index($userId)
     {
         $data = ServiceProvider::getService("Data")->getData();
         $userModel = new UserModel();

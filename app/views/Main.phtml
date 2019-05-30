@@ -19,7 +19,7 @@
         <a href='/link/read/<?=$link["id"]?>'>
             <h4>
                 <?php if ($link["private"]):?>
-                <img src="/images/baseline-assignment_ind-24px.svg">
+                <img src="/images/baseline-assignment_ind-24px.svg" alt="private">
                 <?php endif;?>
                 <?=$link["title"]?>
             </h4>
@@ -32,10 +32,10 @@
             echo $link["url"];
         ?>
         </p>
-        <?php if (ServiceProvider::getService("Authentication")->canEditThisLink($link["id"])):?>
+        <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "edit", $link["id"])):?>
         <a href="/link/edit/<?=$link["id"]?>" class="btn btn-primary text-white">Edit</a>
         <?php endif; ?>
-        <?php if (ServiceProvider::getService("Authentication")->canDeleteThisLink($link["id"])):?>
+        <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "delete", $link["id"])):?>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal" data-url="/link/delete/<?=$link["id"]?>">
                 Delete
             </button>

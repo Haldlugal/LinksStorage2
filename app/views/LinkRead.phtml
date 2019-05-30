@@ -3,18 +3,52 @@
 <div class="px-5 my-3 col-md-6">
     <h3 class="my-0">
         <?php if ($data["private"]):?>
-            <img src="/images/baseline-assignment_ind-24px.svg">
+            <img src="/images/baseline-assignment_ind-24px.svg" alt="private">
         <?php endif; ?>
         <?=$data["title"]?>
     </h3>
     <h5 class="mb-1 wrappable"><?=$data["url"]?></h5>
     <p class="mb-2">
-        <?php if (ServiceProvider::getService("Authentication")->canEditThisLink($data["linkId"])):?>
-        <a href="/link/edit/<?=$data["linkId"]?>" class="btn btn-primary text-white mr-1 btn-sm px-2 py-0">Edit</a>
+        <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "edit", $data["id"])):?>
+        <a href="/link/edit/<?=$data["id"]?>" class="btn btn-primary text-white mr-1 btn-sm px-2 py-0">Edit</a>
         <?php endif;?>
-        <?php if (ServiceProvider::getService("Authentication")->canDeleteThisLink($data["linkId"])):?>
-        <a href="/link/delete/<?=$data["linkId"]?>" class="btn btn-primary text-white btn-sm px-2 py-0">Delete</a>
+        <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "delete", $data["id"])):?>
+            <button type="button" class="btn btn-primary text-white mr-1 btn-sm px-2 py-0" data-toggle="modal" data-target="#deleteModal" data-url="/link/delete/<?=$data["id"]?>">
+                Delete Link
+            </button>
         <?php endif;?>
     </p>
     <p class="border-top border-dark py-2"><?=$data["description"]?></p>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirm deleting link</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure, you want to delete this link?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var url = button.data('url');
+        var deleteButton = $(".delete-btn");
+        deleteButton.on('click', function(){
+            location.replace(url);
+        });
+    })
+</script>

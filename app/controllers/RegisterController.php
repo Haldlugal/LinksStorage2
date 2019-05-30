@@ -11,7 +11,7 @@ class RegisterController extends CommonController {
         $this->userModel = new UserModel();
     }
 
-    function __invoke() {
+    function index() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->userModel = new UserModel();
 

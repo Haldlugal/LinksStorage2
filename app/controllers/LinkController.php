@@ -3,6 +3,44 @@
 
 class LinkController extends ElementsController {
 
+    public function index() {
+        $linkModel = new LinkModel();
+        $data = ServiceProvider::getService("Data");
+        $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
+        $this->head = array("title" => "Main page", "description" => "Main");
+        $allLinks = $linkModel->getReadableList();
+
+        $pagination =  $this->getPagination($allLinks);
+        $linksToShow = $this->getElementsToShow($allLinks);
+
+        $data->setData("pagination", $pagination);
+        $data->setData("userId", $userInfo["id"]);
+        $data->setData("links", $linksToShow);
+
+        $this->view = "Main";
+
+        $this->renderView();
+    }
+
+    public function showMy() {
+        $this->head = array("title" => "My Links", "description" => "Main");
+        $linkModel = new LinkModel();
+        $data = ServiceProvider::getService("Data");
+        $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
+        $links = $linkModel->getListByUserId($userInfo["id"]);
+
+        $pagination =  $this->getPagination($links);
+        $linksToShow = $this->getElementsToShow($links);
+
+        $data->setData("pagination", $pagination);
+        $data->setData("userId", $userInfo["id"]);
+        $data->setData("links", $linksToShow);
+
+        $this->view = "Main";
+
+        $this->renderView();
+    }
+
     public function read($linkId) {
         $this->head = array("title" => "Read link", "description" => "Link");
         $linkModel = new LinkModel();
@@ -22,15 +60,14 @@ class LinkController extends ElementsController {
     public function create() {
         $this->head = array("title" => "Edit link", "description" => "Link");
         $linkModel = new LinkModel();
-        $userId = ServiceProvider::getService("Authorization")->getUserInfo()["id"];
+        $userId = ServiceProvider::getService("Authentication")->getUserInfo()["id"];
         $data = ServiceProvider::getService("Data");
-
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
             if ($_POST["linkPrivacy"] == "on") {
                 $privacy = 1;
             } else $privacy = 0;
 
-            if ($linkModel->isLinkUnique($userId, $_POST["linkUrl"])) {
+            if ($linkModel->isUnique($userId, $_POST["linkUrl"])) {
                 $linkModel->create($_POST["userId"], $_POST["linkTitle"], $_POST["linkUrl"], $_POST["linkDescription"], $privacy);
                 App::redirect("");
             }
@@ -49,10 +86,10 @@ class LinkController extends ElementsController {
     public function edit($linkId) {
         $this->head = array("title" => "Create link", "description" => "Link");
         $linkModel = new LinkModel();
-        $userId = ServiceProvider::getService("Authorization")->getUserInfo()["id"];
+        $userId = ServiceProvider::getService("Authentication")->getUserInfo()["id"];
         $data = ServiceProvider::getService("Data");
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
-            if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isLinkUnique($userId, $_POST["linkUrl"])) {
+            if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
                 $linkModel->edit($_POST["linkId"], $_POST["linkTitle"], $_POST["linkUrl"], $_POST["linkDescription"], $_POST["linkPrivacy"]);
                 App::redirect("link/read/" . $_POST["linkId"]);
             } else {
@@ -74,7 +111,6 @@ class LinkController extends ElementsController {
         }
         $this->view = "LinkEdit";
         $this->renderView();
-
     }
 
 

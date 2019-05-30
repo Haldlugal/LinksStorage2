@@ -10,7 +10,7 @@ class LoginController extends CommonController {
         $this->data = ServiceProvider::getService("Data");
     }
 
-    public function __invoke()
+    public function index()
     {
         if($_SERVER["REQUEST_METHOD"] == "POST") {
             $userModel = new UserModel();
