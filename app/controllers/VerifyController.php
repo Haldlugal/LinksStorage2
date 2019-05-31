@@ -12,7 +12,7 @@ class VerifyController extends CommonController
             $data->setData("success","Your account successfully approved" );
         }
         else {
-            $data->setData("error", "You cannot approve account with that link, It is either invalid or too old.");
+            $data->setData("error", "You cannot approve account with that link, It is either invalid or verification link is expired.");
         }
 
         $this->view = "Verify";

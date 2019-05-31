@@ -8,6 +8,7 @@
         <?=$data["title"]?>
     </h3>
     <h5 class="mb-1 wrappable"><?=$data["url"]?></h5>
+    <p class="small">Published by <?=$data["firstName"]." ".$data["lastName"]?> at <?=date("Y-m-d H:i", strtotime($data["dateCreated"]))?></p>
     <p class="mb-2">
         <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "edit", $data["id"])):?>
         <a href="/link/edit/<?=$data["id"]?>" class="btn btn-primary text-white mr-1 btn-sm px-2 py-0">Edit</a>

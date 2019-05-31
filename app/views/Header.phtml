@@ -24,9 +24,9 @@
                 <li class="nav-item mx-2">
                     <a class="btn btn-primary" href="/">Main</a>
                 </li>
-                <?php if(ServiceProvider::getService("AccessControl")->checkRights("link", "showMy")):?>
+                <?php if(ServiceProvider::getService("Authentication")->isLoggedIn()):?>
                 <li class="nav-item mx-2">
-                    <a class="btn btn-primary" href="/showMy">My links</a>
+                    <a class="btn btn-primary" href="/showList?userId=<?=$userInfo = ServiceProvider::getService("Authentication")->getUserInfo()["id"]?>">My links</a>
                 </li>
                 <?php endif; ?>
                 <?php if(ServiceProvider::getService("AccessControl")->checkRights("user", "index")):?>

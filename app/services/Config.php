@@ -28,6 +28,7 @@ class Config
     private $routing = array(
         "" => array("controllerClass"=>"Link", "action" => "index"),
         "ShowMy" => array("controllerClass" => "Link", "action" => "showMy"),
+        "ShowList" => array("controllerClass" => "Link", "action" => "showList"),
         "Users" => array("controllerClass" => "User", "action" => "index"),
         "Error404" => array("controllerClass" => "Error", "action" => "error404"),
         "Error403" => array("controllerClass" => "Error", "action" => "error403")

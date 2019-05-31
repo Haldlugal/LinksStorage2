@@ -8,7 +8,7 @@ class LinkController extends ElementsController {
         $data = ServiceProvider::getService("Data");
         $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
         $this->head = array("title" => "Main page", "description" => "Main");
-        $allLinks = $linkModel->getReadableList();
+        $allLinks = $linkModel->getReadableList($linkModel->getList());
 
         $pagination =  $this->getPagination($allLinks);
         $linksToShow = $this->getElementsToShow($allLinks);
@@ -17,17 +17,17 @@ class LinkController extends ElementsController {
         $data->setData("userId", $userInfo["id"]);
         $data->setData("links", $linksToShow);
 
-        $this->view = "Main";
+        $this->view = "LinksList";
 
         $this->renderView();
     }
 
-    public function showMy() {
+    /*public function showMy() {
         $this->head = array("title" => "My Links", "description" => "Main");
         $linkModel = new LinkModel();
         $data = ServiceProvider::getService("Data");
         $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
-        $links = $linkModel->getListByUserId($userInfo["id"]);
+        $links = $linkModel->getReadableList($linkModel->getListByUserId($userInfo["id"]));
 
         $pagination =  $this->getPagination($links);
         $linksToShow = $this->getElementsToShow($links);
@@ -36,7 +36,26 @@ class LinkController extends ElementsController {
         $data->setData("userId", $userInfo["id"]);
         $data->setData("links", $linksToShow);
 
-        $this->view = "Main";
+        $this->view = "LinksList";
+
+        $this->renderView();
+    }*/
+
+    public function showList() {
+        $this->head = array("title" => "My Links", "description" => "Main");
+        $userId = $_GET["userId"];
+        $linkModel = new LinkModel();
+        $data = ServiceProvider::getService("Data");
+
+        $links = $linkModel->getReadableList($linkModel->getListByUserId($userId));
+        $pagination =  $this->getPagination($links);
+        $linksToShow = $this->getElementsToShow($links);
+
+        $data->setData("pagination", $pagination);
+        $data->setData("userId", $userId);
+        $data->setData("links", $linksToShow);
+
+        $this->view = "LinksList";
 
         $this->renderView();
     }
@@ -86,9 +105,9 @@ class LinkController extends ElementsController {
     public function edit($linkId) {
         $this->head = array("title" => "Create link", "description" => "Link");
         $linkModel = new LinkModel();
-        $userId = ServiceProvider::getService("Authentication")->getUserInfo()["id"];
         $data = ServiceProvider::getService("Data");
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
+            $userId = $_POST["userId"];
             if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
                 $linkModel->edit($_POST["linkId"], $_POST["linkTitle"], $_POST["linkUrl"], $_POST["linkDescription"], $_POST["linkPrivacy"]);
                 App::redirect("link/read/" . $_POST["linkId"]);
@@ -103,6 +122,7 @@ class LinkController extends ElementsController {
         }
         else {
             $link = $linkModel->get($linkId);
+            $data->setData("userId", $link["userId"]);
             $data->setData("title",$link["title"]);
             $data->setData("linkId",$link["id"]);
             $data->setData("description",$link["description"]);

@@ -12,7 +12,9 @@ class LinkModel {
     }
 
     public function get ($id) {
-        $selectLinkStatement = $this->pdo->prepare("SELECT * FROM links WHERE id = :linkId");
+        $selectLinkStatement = $this->pdo->prepare("SELECT links.id, links.userId, links.title, links.description, links.url, links.private, links.dateCreated, users.firstName, users.lastName FROM links
+            LEFT JOIN users ON links.userId = users.id 
+            WHERE links.id = :linkId");
         $linkData = array("linkId"=>$id);
         $selectLinkStatement->execute($linkData);
         return $selectLinkStatement->fetch();
@@ -49,20 +51,26 @@ class LinkModel {
     }
 
     public function getList() {
-        $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links ORDER BY dateCreated DESC");
+        $selectLinksStatement = $this->pdo->prepare("SELECT links.id, links.userId, links.title, links.description, links.url, links.private, links.dateCreated, users.firstName, users.lastName 
+            FROM links
+            LEFT JOIN users ON links.userId = users.id 
+            ORDER BY dateCreated DESC");
         $selectLinksStatement->execute();
         return $selectLinksStatement->fetchAll();
     }
 
     public function getListByUserId($userId) {
-        $selectLinksStatement = $this->pdo->prepare("SELECT * FROM links WHERE userId = :userId ORDER BY dateCreated DESC");
+        $selectLinksStatement = $this->pdo->prepare("SELECT links.id, links.userId, links.title, links.description, links.url, links.private, links.dateCreated, users.firstName, users.lastName 
+            FROM links
+            LEFT JOIN users ON links.userId = users.id
+            WHERE userId = :userId 
+            ORDER BY dateCreated DESC");
         $data = array("userId" => $userId);
         $selectLinksStatement->execute($data);
         return $selectLinksStatement->fetchAll();
     }
 
-    public function getReadableList() {
-        $links = $this->getList();
+    public function getReadableList($links) {
         $linksToShow = array();
         foreach($links as $link) {
             if (ServiceProvider::getService("AccessControl")->checkRights("link", "read", $link["id"])) {

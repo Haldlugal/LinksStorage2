@@ -28,15 +28,17 @@ class UserController extends ElementsController
 
     public function edit($userId) {
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
-            $this->userModel->edit(array("userId"=>$_POST["userId"],
-                "login" => $_POST["login"],
-                "firstName" => $_POST["firstName"],
-                "lastName" => $_POST["lastName"],
-                "password" => $_POST["password"],
-                "email" => $_POST["email"],
-                "roleId" => $_POST["roleId"],
-                "approved" => $_POST["approved"]));
-            $this->data->setData("success", "User edited successfully");
+            if ($_POST["pastUserLogin"] == $_POST["login"]) {
+                $this->userModel->edit(array("userId" => $_POST["userId"],
+                    "login" => $_POST["login"],
+                    "firstName" => $_POST["firstName"],
+                    "lastName" => $_POST["lastName"],
+                    "password" => $_POST["password"],
+                    "email" => $_POST["email"],
+                    "roleId" => $_POST["roleId"],
+                    "approved" => $_POST["approved"]));
+                $this->data->setData("success", "User edited successfully");
+            }
         }
         $user = $this->userModel->selectById($userId);
         $rightsModel = new RightsService();

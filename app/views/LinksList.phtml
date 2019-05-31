@@ -32,6 +32,11 @@
             echo $link["url"];
         ?>
         </p>
+        <p class="small">Published by
+            <a href="/showList?userId=<?=$link["userId"]?>">
+                <?=$link["firstName"]." ".$link["lastName"]?>
+            </a>
+            at <?=date("Y-m-d H:i", strtotime($link["dateCreated"]))?></p>
         <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "edit", $link["id"])):?>
         <a href="/link/edit/<?=$link["id"]?>" class="btn btn-primary text-white">Edit</a>
         <?php endif; ?>

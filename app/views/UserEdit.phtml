@@ -6,19 +6,19 @@
         <input type="hidden" name="pastUserLogin" value="<?=$data["login"]?>">
         <div class="form-group ">
             <label for="login">Login</label>
-            <input id="login" class="form-control" type="text" name="login" placeholder="Login" value="<?=$data["login"]?>" readonly>
+            <input id="login" class="form-control" type="text" name="login" placeholder="Login" value="<?=$data["login"]?>" maxlength="100" readonly>
         </div>
         <div class="form-group ">
             <label for="firstName">First Name</label>
-            <input id="firstName" class="form-control" type="text" name="firstName" placeholder="First Name" value="<?=$data["firstName"]?>" required>
+            <input id="firstName" class="form-control" type="text" name="firstName" placeholder="First Name" value="<?=$data["firstName"]?>" maxlength="100" required>
         </div>
         <div class="form-group ">
             <label for="lastName">Last Name</label>
-            <input id="lastName" class="form-control" type="text" name="lastName" placeholder="Last Name" value="<?=$data["lastName"]?>" required>
+            <input id="lastName" class="form-control" type="text" name="lastName" placeholder="Last Name" value="<?=$data["lastName"]?>" maxlength="100" required>
         </div>
         <div class="form-group ">
             <label for="email">Email</label>
-            <input id="email" class="form-control" type="email" name="email" placeholder="Email" value="<?=$data["email"]?>" required>
+            <input id="email" class="form-control" type="email" name="email" placeholder="Email" value="<?=$data["email"]?>" maxlength="100" required>
         </div>
         <div class="form-check mb-3 <?php  if (!ServiceProvider::getService("AccessControl")->checkRights("user", "editOther")) echo "d-none" ?>">
             <input type="checkbox" class="form-check-input" id="approved" name="approved"
@@ -41,16 +41,18 @@
         </div>
         <div class="form-group ">
             <label for="password">Password</label>
-            <input id="password" class="form-control" type="text" name="password" placeholder="Password" >
+            <input id="password" class="form-control" type="text" name="password" placeholder="Password" maxlength="100">
         </div>
         <div class="form-group">
             <label for="confirmPassword">Confirm Password</label>
-            <input id="confirmPassword" class="form-control" type="text" name="" placeholder="Repeat password" >
+            <input id="confirmPassword" class="form-control" type="text" name="" placeholder="Repeat password" maxlength="100">
         </div>
         <button class="btn btn-primary" type="submit">Edit</button>
+        <?php if (ServiceProvider::getService("AccessControl")->checkRights("user", "delete")):?>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal" data-url="/user/delete/<?=$data["id"]?>">
             Delete
         </button>
+        <?php endif; ?>
     </form>
     <?php if ($data["success"]!=""): ?>
         <div class="alert alert-success" role="alert">

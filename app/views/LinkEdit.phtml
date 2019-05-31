@@ -4,17 +4,18 @@
     <form class="mb-3" method="post">
         <input type="hidden" name="linkId" value="<?=$data["linkId"]?>">
         <input type="hidden" name="pastLinkUrl" value="<?=$data["url"]?>">
+        <input type="hidden" name="userId" value="<?=$data["userId"]?>">
         <div class="form-group ">
             <label for="linkTitle">Title</label>
-            <input id="linkTitle" class="form-control" type="text" name="linkTitle" value="<?=$data["title"]?>" required>
+            <input id="linkTitle" class="form-control" type="text" name="linkTitle" value="<?=$data["title"]?>" maxlength="100" required>
         </div>
         <div class="form-group ">
             <label for="linkUrl">Url</label>
-            <input id="linkUrl" class="form-control" type="url" name="linkUrl" value="<?=$data["url"]?>" required>
+            <input id="linkUrl" class="form-control" type="url" name="linkUrl" value="<?=$data["url"]?>" maxlength="2083" required>
         </div>
         <div class="form-group ">
             <label for="linkDescription">Description</label>
-            <textarea id="linkDescription" class="form-control" name="linkDescription" rows="3"><?=$data["description"]?></textarea>
+            <textarea id="linkDescription" class="form-control" name="linkDescription" rows="3" maxlength="3000"><?=$data["description"]?></textarea>
         </div>
         <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="privacy" name="linkPrivacy"
