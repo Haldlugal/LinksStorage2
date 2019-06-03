@@ -22,25 +22,6 @@ class LinkController extends ElementsController {
         $this->renderView();
     }
 
-    /*public function showMy() {
-        $this->head = array("title" => "My Links", "description" => "Main");
-        $linkModel = new LinkModel();
-        $data = ServiceProvider::getService("Data");
-        $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
-        $links = $linkModel->getReadableList($linkModel->getListByUserId($userInfo["id"]));
-
-        $pagination =  $this->getPagination($links);
-        $linksToShow = $this->getElementsToShow($links);
-
-        $data->setData("pagination", $pagination);
-        $data->setData("userId", $userInfo["id"]);
-        $data->setData("links", $linksToShow);
-
-        $this->view = "LinksList";
-
-        $this->renderView();
-    }*/
-
     public function showList() {
         $this->head = array("title" => "My Links", "description" => "Main");
         $userId = $_GET["userId"];
@@ -77,7 +58,7 @@ class LinkController extends ElementsController {
     }
 
     public function create() {
-        $this->head = array("title" => "Edit link", "description" => "Link");
+        $this->head = array("title" => "Create link", "description" => "Link");
         $linkModel = new LinkModel();
         $userId = ServiceProvider::getService("Authentication")->getUserInfo()["id"];
         $data = ServiceProvider::getService("Data");
@@ -87,14 +68,23 @@ class LinkController extends ElementsController {
             } else $privacy = 0;
 
             if ($linkModel->isUnique($userId, $_POST["linkUrl"])) {
-                $linkModel->create($_POST["userId"], $_POST["linkTitle"], $_POST["linkUrl"], $_POST["linkDescription"], $privacy);
+                $linkInfo = array(
+                    "userId" => $_POST["userId"],
+                    "title" => $_POST["linkTitle"],
+                    "url" => $_POST["linkUrl"],
+                    "description" => $_POST["linkDescription"],
+                    "privacy" => $_POST["linkPrivacy"]
+                );
+                $linkModel->create($linkInfo);
                 App::redirect("");
             }
             else {
-                $data->setData("title", $_POST["linkTitle"]);
-                $data->setData("url", $_POST["linkUrl"]);
-                $data->setData("description", $_POST["linkDescription"]);
-                $data->setData("private", $privacy);
+                $linkInfo = array(
+                    "title" => $_POST["linkTitle"],
+                    "url" => $_POST["linkUrl"],
+                    "description" => $_POST["linkDescription"],
+                    "private" => $privacy);
+                $data->setData("linkInfo", $linkInfo);
                 $data->setData("errorMessage", "Link with such url already exists");
             }
         }
@@ -103,31 +93,44 @@ class LinkController extends ElementsController {
     }
 
     public function edit($linkId) {
-        $this->head = array("title" => "Create link", "description" => "Link");
+        $this->head = array("title" => "Edit link", "description" => "Link");
         $linkModel = new LinkModel();
         $data = ServiceProvider::getService("Data");
         if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
             $userId = $_POST["userId"];
+
             if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
-                $linkModel->edit($_POST["linkId"], $_POST["linkTitle"], $_POST["linkUrl"], $_POST["linkDescription"], $_POST["linkPrivacy"]);
+                $linkInfo = array(
+                    "id" => $_POST["linkId"],
+                    "title" => $_POST["linkTitle"],
+                    "url" => $_POST["linkUrl"],
+                    "description" => $_POST["linkDescription"],
+                    "privacy" => $_POST["linkPrivacy"]
+                );
+                $linkModel->edit($linkInfo);
                 App::redirect("link/read/" . $_POST["linkId"]);
             } else {
-                $data->setData("linkId",$_POST["linkId"]);
-                $data->setData("title", $_POST["linkTitle"]);
-                $data->setData("url", $_POST["pastLinkUrl"]);
-                $data->setData("description", $_POST["linkDescription"]);
-                $data->setData("private", $_POST["linkPrivacy"]);
+                $linkInfo = array(
+                    "linkId" => $_POST["linkId"],
+                    "userId" => $_POST["userId"],
+                    "title" => $_POST["linkTitle"],
+                    "url" => $_POST["pastLinkUrl"],
+                    "description" => $_POST["linkDescription"],
+                    "private" => $_POST["linkPrivacy"]);
+                $data->setData("linkInfo", $linkInfo);
                 $data->setData("errorMessage", "Link with such url already exists");
             }
         }
         else {
             $link = $linkModel->get($linkId);
-            $data->setData("userId", $link["userId"]);
-            $data->setData("title",$link["title"]);
-            $data->setData("linkId",$link["id"]);
-            $data->setData("description",$link["description"]);
-            $data->setData("url",$link["url"]);
-            $data->setData("private", $link["private"]);
+            $linkInfo = array(
+                "linkId" => $link["id"],
+                "userId" => $link["userId"],
+                "title" => $link["title"],
+                "url" => $link["url"],
+                "description" => $link["description"],
+                "private" => $link["private"]);
+            $data->setData("linkInfo", $linkInfo);
         }
         $this->view = "LinkEdit";
         $this->renderView();

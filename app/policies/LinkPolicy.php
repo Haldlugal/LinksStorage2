@@ -53,6 +53,9 @@ class LinkPolicy
         else if ($access == "own") {
             $linkModel = new LinkModel();
             $linkInfo = $linkModel->get($link);
+            if (!$linkInfo) {
+                return false;
+            }
             if ($linkInfo["private"] == 1) {
                 if ($userInfo["id"] == $linkInfo["userId"]){
                     return true;

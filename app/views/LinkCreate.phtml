@@ -1,6 +1,7 @@
 
 <?php
-    $data = ServiceProvider::getService("Data")->getData();
+    $data = ServiceProvider::getService("Data")->getData()["linkInfo"];
+    $error = ServiceProvider::getService("Data")->getData()["errorMessage"];
     $userData = ServiceProvider::getService("Authentication")->getUserInfo();
 ?>
 <div class="editLinkPage px-5 py-4 col-md-4">
@@ -25,9 +26,9 @@
         </div>
         <button class="btn btn-primary" type="submit">Create Link</button>
     </form>
-    <?php if ($data["errorMessage"]!=""): ?>
+    <?php if ($error!=""): ?>
         <div class="alert alert-danger" role="alert">
-            <?=$data["errorMessage"]?>
+            <?=$error?>
         </div>
     <?php endif; ?>
 </div>

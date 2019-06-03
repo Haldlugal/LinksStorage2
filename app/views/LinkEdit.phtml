@@ -1,5 +1,8 @@
 
-<?php $data = ServiceProvider::getService("Data")->getData();?>
+<?php
+    $data = ServiceProvider::getService("Data")->getData()["linkInfo"];
+    $error = ServiceProvider::getService("Data")->getData()["errorMessage"];
+?>
 <div class="editLinkPage px-5 py-4 col-md-4">
     <form class="mb-3" method="post">
         <input type="hidden" name="linkId" value="<?=$data["linkId"]?>">
@@ -27,9 +30,9 @@
             Delete Link
         </button>
     </form>
-    <?php if ($data["errorMessage"]!=""): ?>
+    <?php if ($error!=""): ?>
         <div class="alert alert-danger" role="alert">
-            <?=$data["errorMessage"]?>
+            <?=$error?>
         </div>
     <?php endif; ?>
 </div>

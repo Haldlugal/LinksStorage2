@@ -18,6 +18,9 @@ class RegisterController extends CommonController {
             if ($this->userModel->loginExists($_POST["login"])){
                 $this->data->setData("errorMessage", "User with such login: ".$_POST["login"]." already exists");
             }
+            else if ($this->userModel->emailExists($_POST["email"])){
+                $this->data->setData("errorMessage", "User with such email: ".$_POST["email"]." already exists");
+            }
             else {
                 $this->registerUser();
                 $this->data->setData("successMessage", "Confirmation email has been sent to you");

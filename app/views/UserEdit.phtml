@@ -1,9 +1,15 @@
 
-<?php $data = ServiceProvider::getService("Data")->getData();?>
+<?php
+    $data = ServiceProvider::getService("Data")->getData()["userInfo"];
+    $roles = ServiceProvider::getService("Data")->getData()["roles"];
+    $error = ServiceProvider::getService("Data")->getData()["error"];
+    $success =ServiceProvider::getService("Data")->getData()["success"];
+?>
 <div class="editLinkPage px-5 py-4 col-md-4">
     <form class="mb-3" method="post">
         <input type="hidden" name="userId" value="<?=$data["id"]?>">
         <input type="hidden" name="pastUserLogin" value="<?=$data["login"]?>">
+        <input type="hidden" name="pastEmail" value="<?=$data["email"]?>">
         <div class="form-group ">
             <label for="login">Login</label>
             <input id="login" class="form-control" type="text" name="login" placeholder="Login" value="<?=$data["login"]?>" maxlength="100" readonly>
@@ -29,7 +35,7 @@
         <div class="form-group <?php if (!ServiceProvider::getService("AccessControl")->checkRights("user", "editOther")) echo "d-none" ?>">
             <label for="role">Role</label>
             <select class="form-control" name="roleId" id="role">
-                <?php foreach($data["roles"] as $role):?>
+                <?php foreach($roles as $role):?>
                     <?php if ($role["name"]!="anonymous"):?>
                         <option value="<?=$role["id"]?>"
                         <?php if ($role["id"] == $data["roleId"]) echo "selected"?>>
@@ -41,22 +47,27 @@
         </div>
         <div class="form-group ">
             <label for="password">Password</label>
-            <input id="password" class="form-control" type="text" name="password" placeholder="Password" maxlength="100">
+            <input id="password" class="form-control" type="password" name="password" placeholder="Password" maxlength="100">
         </div>
         <div class="form-group">
             <label for="confirmPassword">Confirm Password</label>
-            <input id="confirmPassword" class="form-control" type="text" name="" placeholder="Repeat password" maxlength="100">
+            <input id="confirmPassword" class="form-control" type="password" name="" placeholder="Repeat password" maxlength="100">
         </div>
-        <button class="btn btn-primary" type="submit">Edit</button>
+        <button class="btn btn-primary edit-btn" type="submit">Edit</button>
         <?php if (ServiceProvider::getService("AccessControl")->checkRights("user", "delete")):?>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal" data-url="/user/delete/<?=$data["id"]?>">
             Delete
         </button>
         <?php endif; ?>
     </form>
-    <?php if ($data["success"]!=""): ?>
+    <?php if ($error!=""):?>
+        <div class="alert alert-danger" role="alert">
+            <?=$error?>
+        </div>
+    <?php endif; ?>
+    <?php if ($success!=""): ?>
         <div class="alert alert-success" role="alert">
-            <?=$data["success"]?>
+            <?=$success?>
         </div>
     <?php endif; ?>
 </div>
@@ -82,21 +93,19 @@
 </div>
 
 <script>
-    $(".alert").delay(2000).fadeOut("slow");
 
     let password = document.getElementById("password");
     let confirm_password = document.getElementById("confirmPassword");
     function validatePassword(){
-        if (password.value!="" && confirm_password.value!=""){
-            if(password.value !== confirm_password.value) {
-                confirm_password.setCustomValidity("Passwords Don't Match");
-            } else {
-                confirm_password.setCustomValidity('');
-            }
+        if(password.value !== confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
         }
     }
     password.onchange = validatePassword;
     confirm_password.onchange = validatePassword;
+
     $('#deleteModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var url = button.data('url');
@@ -105,4 +114,5 @@
             location.replace(url);
         });
     })
+
 </script>

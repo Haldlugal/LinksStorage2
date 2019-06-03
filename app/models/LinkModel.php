@@ -20,27 +20,28 @@ class LinkModel {
         return $selectLinkStatement->fetch();
     }
 
-    public function edit($id, $title, $url, $description, $privacy) {
-        if ($privacy=="on") {
-            $privacy = 1;
+    public function edit($linkInfo) {
+
+        if ($linkInfo["privacy"]=="on") {
+            $linkInfo["privacy"] = 1;
         }
         else {
-            $privacy = 0;
+            $linkInfo["privacy"] = 0;
         }
         $editLinkStatement = $this->pdo->prepare("UPDATE links SET title = :title, url = :url, description = :description, private = :private  WHERE id = :linkId");
-        $linkData = array("linkId" => $id, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
+        $linkData = array("linkId" => $linkInfo["id"], "title" => $linkInfo["title"], "url" => $linkInfo["url"], "description" => $linkInfo["description"], "private" => $linkInfo["privacy"]);
         $editLinkStatement->execute($linkData);
     }
 
-    public function create($userId, $title, $url, $description, $privacy) {
-        if ($privacy=="on") {
-            $privacy = 1;
+    public function create($linkInfo) {
+        if ($linkInfo["privacy"]=="on") {
+            $linkInfo["privacy"] = 1;
         }
         else {
-            $privacy = 0;
+            $linkInfo["privacy"] = 0;
         }
         $createLinkStatement = $this->pdo->prepare("INSERT INTO links (userId, title, description, url, private) VALUES (:userId, :title, :description, :url, :private)");
-        $data = array("userId"=>$userId, "title" => $title, "url" => $url, "description" => $description, "private" => $privacy);
+        $data = array("userId"=>$linkInfo["userId"], "title" => $linkInfo["title"], "url" => $linkInfo["url"], "description" => $linkInfo["description"], "private" => $linkInfo["privacy"]);
         $createLinkStatement->execute($data);
     }
 
@@ -88,13 +89,6 @@ class LinkModel {
             return false;
         }
         else return true;
-    }
-
-    public function isPrivate($linkId) {
-        $selectLinkStatement = $this->pdo->prepare("SELECT private FROM links WHERE id = :linkId");
-        $linkData = array("linkId"=>$linkId);
-        $selectLinkStatement->execute($linkData);
-        $selectLinkStatement->fetchColumn();
     }
 
     public function clearUsersLinks($userId) {
