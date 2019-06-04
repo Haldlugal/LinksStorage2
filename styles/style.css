@@ -2,3 +2,36 @@
 .wrappable {
     word-wrap: break-word;
 }
+
+#popup-background {
+    display: none;
+
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index:100;
+
+    background-color: #9799A2;
+    opacity: 0.5;
+}
+
+#edit-popup {
+    width: 100%;
+
+    position: fixed;
+    top: 300px;
+    z-index: 110;
+
+
+}
+
+.edit-form {
+    border-radius: 5px;
+}
+
+.close-button {
+    cursor:pointer;
+
+}

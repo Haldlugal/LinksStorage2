@@ -136,6 +136,33 @@ class LinkController extends ElementsController {
         $this->renderView();
     }
 
+    public function readAjax() {
+        $linkId = $_GET["linkId"];
+        $linkModel = new LinkModel();
+        $link = $linkModel->get($linkId);
+        echo json_encode($link);
+    }
+
+    public function editAjax() {
+        $linkModel = new LinkModel();
+        if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
+            $userId = $_POST["userId"];
+            if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
+                $linkInfo = array(
+                    "id" => $_POST["linkId"],
+                    "title" => $_POST["linkTitle"],
+                    "url" => $_POST["linkUrl"],
+                    "description" => $_POST["linkDescription"],
+                    "privacy" => $_POST["linkPrivacy"]
+                );
+                $linkModel->edit($linkInfo);
+                echo json_encode(array("edited"=>"ok", "message" => "Link edited!"));
+            } else {
+                echo json_encode(array("edited"=>"not", "message" => "Link with such url already exists"));
+            }
+        }
+    }
+
 
 
 

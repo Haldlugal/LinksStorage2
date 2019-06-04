@@ -23,6 +23,27 @@ class LinkPolicy
         }
     }
 
+    public function editAjax($link) {
+        $link = $_POST["linkId"];
+        $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
+        $rights = ServiceProvider::getService("Rights");
+        $access = $rights->checkAccessLevel($userInfo["roleId"], "link", "edit");
+        if ($access == "any"){
+            return true;
+        }
+        else if ($access == "own") {
+            $linkModel = new LinkModel();
+            $linkInfo = $linkModel->get($link);
+            if ($userInfo["id"] == $linkInfo["userId"]){
+                return true;
+            }
+            else return false;
+        }
+        else {
+            return false;
+        }
+    }
+
     public function delete($link) {
         $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
         $rights = ServiceProvider::getService("Rights");
@@ -44,6 +65,33 @@ class LinkPolicy
     }
 
     public function read($link) {
+        $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
+        $rights = ServiceProvider::getService("Rights");
+        $access = $rights->checkAccessLevel($userInfo["roleId"], "link", "read");
+        if ($access == "any"){
+            return true;
+        }
+        else if ($access == "own") {
+            $linkModel = new LinkModel();
+            $linkInfo = $linkModel->get($link);
+            if (!$linkInfo) {
+                return false;
+            }
+            if ($linkInfo["private"] == 1) {
+                if ($userInfo["id"] == $linkInfo["userId"]){
+                    return true;
+                }
+                else return false;
+            }
+            else return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function readAjax() {
+        $link = $_GET["linkId"];
         $userInfo = ServiceProvider::getService("Authentication")->getUserInfo();
         $rights = ServiceProvider::getService("Rights");
         $access = $rights->checkAccessLevel($userInfo["roleId"], "link", "read");

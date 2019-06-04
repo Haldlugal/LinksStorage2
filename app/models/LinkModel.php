@@ -82,9 +82,11 @@ class LinkModel {
     }
 
     public function isUnique($userId, $linkUrl) {
+
         $statement = $this->pdo->prepare("SELECT COUNT(id) FROM links WHERE userId = :userId AND url = :linkUrl");
         $data = array("userId" => $userId, "linkUrl" => $linkUrl);
         $statement->execute($data);
+
         if ($statement->fetchColumn()){
             return false;
         }
