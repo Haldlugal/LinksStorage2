@@ -19,6 +19,6 @@
 }
 
 .edit-popup.visible {
-    transition: max-height 500ms ease-in-out;
     max-height: 500px;
+
 }

@@ -81,6 +81,35 @@
 </ul>
 <?=$data["pagination"];?>
 
+<!-- Modal for link edit--><!--
+<div class="row toggle-content edit-popup" id="edit-popup">
+    <form class="col-3 mt-3 p-2 bg-white editLink-form" method="post">
+        <h5>Edit Link <span class="close close-button" id="popup-close">&times;</span></h5>
+        <input type="hidden" class="linkId" name="linkId" value="<?=$link["id"]?>">
+        <input type="hidden" class="pastLinkUrl" name="pastLinkUrl" value="<?=$link["url"]?>">
+        <input type="hidden" class="userId" name="userId" value="<?=$link["userId"]?>">
+        <div class="form-group ">
+            <label for="linkTitle<?=$link["id"]?>">Title</label>
+            <input id="linkTitle<?=$link["id"]?>" class="linkTitle form-control" type="text" name="linkTitle" value="<?=$link["title"]?>" maxlength="100" required>
+        </div>
+        <div class="form-group ">
+            <label for="linkUrl<?=$link["id"]?>">Url</label>
+            <input id="linkUrl<?=$link["id"]?>" class="linkUrl form-control" type="url" name="linkUrl" value="<?=$link["url"]?>" maxlength="2083" required>
+        </div>
+        <div class="form-group ">
+            <label for="linkDescription<?=$link["id"]?>">Description</label>
+            <textarea id="linkDescription<?=$link["id"]?>" class="linkDescription form-control" name="linkDescription" rows="3" maxlength="3000"><?=$link["description"]?></textarea>
+        </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input linkPrivacy" id="linkPrivacy<?=$link["id"]?>" name="linkPrivacy"
+                <?php if ($link["private"] == 1) echo "checked"?>>
+            <label class="form-check-label" for="linkPrivacy<?=$link["id"]?>">Privacy</label>
+        </div>
+        <button class="btn btn-primary" type="submit">Edit</button>
+        <div id="result" class="result mt-2"></div>
+    </form>
+</div>-->
+
 <!-- Modal for link delete-->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -102,15 +131,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/app/scripts/editLink.js"></script>
+<script type="text/javascript" src="/app/scripts/linksList.js"></script>
 
-<script>
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        let button = $(event.relatedTarget);
-        let url = button.data('url');
-        let deleteButton = $(".delete-btn");
-        deleteButton.on('click', function(){
-            location.replace(url);
-        });
-    })
-</script>

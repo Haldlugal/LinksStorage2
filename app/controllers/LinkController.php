@@ -114,7 +114,7 @@ class LinkController extends ElementsController {
                         "privacy" => $_POST["linkPrivacy"]
                     );
                     $linkModel->edit($linkInfo);
-                    echo json_encode(array("edited"=>"ok", "message" => "Link edited!"));
+                    echo json_encode(array("edited"=>"ok", "message" => "Link edited successfully"));
                 } else {
                     echo json_encode(array("edited"=>"not", "message" => "Link with such url already exists"));
                 }
