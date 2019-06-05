@@ -1,7 +1,6 @@
 <?php
     $data = ServiceProvider::getService("Data")->getData();
 ?>
-<div id="popup-background"></div>
 <ul class="list-group list-group-flush">
     <?php
         $counter = 1;
@@ -15,8 +14,7 @@
         }
         $counter ++;
     ?>
-    <li class="list-group-item list-group-item-action <?=$listGroupItem?> px-5" id='link-<?=$link["id"]?>'>
-
+    <li class="link-element list-group-item list-group-item-action <?=$listGroupItem?> px-5 py-3" id='link-<?=$link["id"]?>'>
         <a href='/link/read/<?=$link["id"]?>'>
             <h4>
                 <?php
@@ -41,47 +39,47 @@
             </a>
             at <?=date("Y-m-d H:i", strtotime($link["dateCreated"]))?></p>
         <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "edit", $link["id"])):?>
-        <button type="button" onclick="showEditPopup(<?=$link["id"]?>)" class="btn btn-primary text-white btn-edit">Edit</button>
+        <button type="button" class="btn btn-primary text-white btn-edit">Edit</button>
         <?php endif; ?>
         <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "delete", $link["id"])):?>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal" data-url="/link/delete/<?=$link["id"]?>">
                 Delete
             </button>
         <?php endif; ?>
+        <?php if (ServiceProvider::getService("AccessControl")->checkRights("link", "edit", $link["id"])):?>
+        <!-- Modal for link edit-->
+        <div class="row toggle-content edit-popup">
+            <form class="col-3 mt-3 p-2 bg-white editLink-form" method="post">
+                <h5>Edit Link <span class="close close-button" id="popup-close">&times;</span></h5>
+                <input type="hidden" class="linkId" name="linkId" value="<?=$link["id"]?>">
+                <input type="hidden" class="pastLinkUrl" name="pastLinkUrl" value="<?=$link["url"]?>">
+                <input type="hidden" class="userId" name="userId" value="<?=$link["userId"]?>">
+                <div class="form-group ">
+                    <label for="linkTitle<?=$link["id"]?>">Title</label>
+                    <input id="linkTitle<?=$link["id"]?>" class="linkTitle form-control" type="text" name="linkTitle" value="<?=$link["title"]?>" maxlength="100" required>
+                </div>
+                <div class="form-group ">
+                    <label for="linkUrl<?=$link["id"]?>">Url</label>
+                    <input id="linkUrl<?=$link["id"]?>" class="linkUrl form-control" type="url" name="linkUrl" value="<?=$link["url"]?>" maxlength="2083" required>
+                </div>
+                <div class="form-group ">
+                    <label for="linkDescription<?=$link["id"]?>">Description</label>
+                    <textarea id="linkDescription<?=$link["id"]?>" class="linkDescription form-control" name="linkDescription" rows="3" maxlength="3000"><?=$link["description"]?></textarea>
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input linkPrivacy" id="linkPrivacy<?=$link["id"]?>" name="linkPrivacy"
+                        <?php if ($link["private"] == 1) echo "checked"?>>
+                    <label class="form-check-label" for="linkPrivacy<?=$link["id"]?>">Privacy</label>
+                </div>
+                <button class="btn btn-primary" type="submit">Edit</button>
+                <div id="result" class="result mt-2"></div>
+            </form>
+        </div>
+        <?php endif; ?>
     </li>
     <?php endforeach; ?>
 </ul>
 <?=$data["pagination"];?>
-<!-- Modal for link edit-->
-<div class="row d-none justify-content-center fixed-top" id="edit-popup">
-    <form class="col-3 mb-3 p-2 bg-white edit-form" id="edit-form" onsubmit="editLink(); return false;" method="post">
-        <h5>Edit Link <span class="close close-button" id="popup-close" onclick="hideEditPopup()">&times;</span></h5>
-        <input type="hidden" id="linkId" name="linkId" value="<?=$data["linkId"]?>">
-        <input type="hidden" id="pastLinkUrl" name="pastLinkUrl" value="<?=$data["url"]?>">
-        <input type="hidden" id="userId" name="userId" value="<?=$data["userId"]?>">
-
-        <div class="form-group ">
-            <label for="linkTitle">Title</label>
-            <input id="linkTitle" class="form-control" type="text" name="linkTitle" value="<?=$data["title"]?>" maxlength="100" required>
-        </div>
-        <div class="form-group ">
-            <label for="linkUrl">Url</label>
-            <input id="linkUrl" class="form-control" type="url" name="linkUrl" value="<?=$data["url"]?>" maxlength="2083" required>
-        </div>
-        <div class="form-group ">
-            <label for="linkDescription">Description</label>
-            <textarea id="linkDescription" class="form-control" name="linkDescription" rows="3" maxlength="3000"><?=$data["description"]?></textarea>
-        </div>
-        <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="linkPrivacy" name="linkPrivacy"
-                <?php if ($data["private"] == 1) echo "checked"?>>
-            <label class="form-check-label" for="linkPrivacy">Privacy</label>
-        </div>
-        <button class="btn btn-primary" type="submit">Edit</button>
-        <div id="result" class="mt-2"></div>
-    </form>
-</div>
-
 
 <!-- Modal for link delete-->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -104,78 +102,9 @@
     </div>
 </div>
 
+<script type="text/javascript" src="/app/scripts/editLink.js"></script>
+
 <script>
-    function showEditPopup(link) {
-        let editPopup = document.getElementById("edit-popup");
-        let popupBackground = document.getElementById("popup-background");
-        let message = document.getElementById("result");
-        message.innerText = "";
-        popupBackground.style.display = "block";
-        editPopup.classList.remove("d-none");
-        editPopup.classList.add("d-flex");
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                let result = JSON.parse(this.response);
-                document.getElementById("linkId").value = result.id;
-                document.getElementById("pastLinkUrl").value = result.url;
-                document.getElementById("userId").value = result.userId;
-                document.getElementById("linkTitle").value = result.title;
-                document.getElementById("linkUrl").value = result.url;
-                document.getElementById("linkDescription").value = result.description;
-                if (result.private == 1) {
-                    document.getElementById("linkPrivacy").checked = true;
-                }
-                else {
-                    document.getElementById("linkPrivacy").checked = false;
-                }
-            }
-        };
-        xhttp.open("GET", "link/readAjax?linkId="+link, true);
-        xhttp.send();
-    }
-
-    function hideEditPopup() {
-        let editPopup = document.getElementById("edit-popup");
-        let popupBackground = document.getElementById("popup-background");
-        editPopup.classList.remove("d-flex");
-        editPopup.classList.add("d-none");
-        popupBackground.style.display = "none";
-    }
-
-    function editLink() {
-        let form = document.getElementById("edit-form");
-        let request = new XMLHttpRequest();
-        let formData = new FormData(form);
-        request.open("POST", "link/editAjax");
-        request.onreadystatechange = function() {
-            if (this.readyState === 4 && this.status === 200) {
-                let result = JSON.parse(this.response);
-                let message = document.getElementById("result");
-                if (result.edited==="ok") {
-                    let linkId = document.getElementById("linkId").value;
-                    let linkTitle = document.getElementById("linkTitle").value;
-                    let linkUrl = document.getElementById("linkUrl").value;
-                    let linkPrivacy = document.getElementById("linkPrivacy").checked;
-                    let link = document.getElementById("link-" + linkId);
-                    link.getElementsByClassName("linkTitle")[0].innerHTML = linkTitle;
-                    link.getElementsByClassName("linkUrl")[0].innerHTML = linkUrl;
-                    if(linkPrivacy) {
-                        link.getElementsByClassName("linkPrivate")[0].classList.remove("d-none");
-                        link.getElementsByClassName("linkPrivate")[0].classList.add("d-inline");
-                    }
-                    else {
-                        link.getElementsByClassName("linkPrivate")[0].classList.remove("d-inline");
-                        link.getElementsByClassName("linkPrivate")[0].classList.add("d-none");
-                    }
-                    hideEditPopup();
-                }
-                message.innerText = result.message;
-            }
-        };
-        request.send(formData);
-    }
-
     $('#deleteModal').on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget);
         let url = button.data('url');

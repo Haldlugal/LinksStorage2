@@ -42,13 +42,21 @@ class LinkController extends ElementsController {
     }
 
     public function read($linkId) {
-        $this->head = array("title" => "Read link", "description" => "Link");
-        $linkModel = new LinkModel();
-        $data = ServiceProvider::getService("Data");
-        $link = $linkModel->get($linkId);
-        $data->setData("link", $link);
-        $this->view = "LinkRead";
-        $this->renderView();
+        if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' )
+        {
+            $linkModel = new LinkModel();
+            $link = $linkModel->get($linkId);
+            echo json_encode($link);
+        }
+        else {
+            $this->head = array("title" => "Read link", "description" => "Link");
+            $linkModel = new LinkModel();
+            $data = ServiceProvider::getService("Data");
+            $link = $linkModel->get($linkId);
+            $data->setData("link", $link);
+            $this->view = "LinkRead";
+            $this->renderView();
+        }
     }
 
     public function delete($linkId) {
@@ -93,77 +101,67 @@ class LinkController extends ElementsController {
     }
 
     public function edit($linkId) {
-        $this->head = array("title" => "Edit link", "description" => "Link");
-        $linkModel = new LinkModel();
-        $data = ServiceProvider::getService("Data");
-        if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
-            $userId = $_POST["userId"];
-
-            if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
-                $linkInfo = array(
-                    "id" => $_POST["linkId"],
-                    "title" => $_POST["linkTitle"],
-                    "url" => $_POST["linkUrl"],
-                    "description" => $_POST["linkDescription"],
-                    "privacy" => $_POST["linkPrivacy"]
-                );
-                $linkModel->edit($linkInfo);
-                App::redirect("link/read/" . $_POST["linkId"]);
-            } else {
-                $linkInfo = array(
-                    "linkId" => $_POST["linkId"],
-                    "userId" => $_POST["userId"],
-                    "title" => $_POST["linkTitle"],
-                    "url" => $_POST["pastLinkUrl"],
-                    "description" => $_POST["linkDescription"],
-                    "private" => $_POST["linkPrivacy"]);
-                $data->setData("linkInfo", $linkInfo);
-                $data->setData("errorMessage", "Link with such url already exists");
+        if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' ){
+            $linkModel = new LinkModel();
+            if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
+                $userId = $_POST["userId"];
+                if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
+                    $linkInfo = array(
+                        "id" => $_POST["linkId"],
+                        "title" => $_POST["linkTitle"],
+                        "url" => $_POST["linkUrl"],
+                        "description" => $_POST["linkDescription"],
+                        "privacy" => $_POST["linkPrivacy"]
+                    );
+                    $linkModel->edit($linkInfo);
+                    echo json_encode(array("edited"=>"ok", "message" => "Link edited!"));
+                } else {
+                    echo json_encode(array("edited"=>"not", "message" => "Link with such url already exists"));
+                }
             }
         }
         else {
-            $link = $linkModel->get($linkId);
-            $linkInfo = array(
-                "linkId" => $link["id"],
-                "userId" => $link["userId"],
-                "title" => $link["title"],
-                "url" => $link["url"],
-                "description" => $link["description"],
-                "private" => $link["private"]);
-            $data->setData("linkInfo", $linkInfo);
-        }
-        $this->view = "LinkEdit";
-        $this->renderView();
-    }
+            $this->head = array("title" => "Edit link", "description" => "Link");
+            $linkModel = new LinkModel();
+            $data = ServiceProvider::getService("Data");
+            if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
+                $userId = $_POST["userId"];
 
-    public function readAjax() {
-        $linkId = $_GET["linkId"];
-        $linkModel = new LinkModel();
-        $link = $linkModel->get($linkId);
-        echo json_encode($link);
-    }
-
-    public function editAjax() {
-        $linkModel = new LinkModel();
-        if ($_SERVER["REQUEST_METHOD"]=="POST" ) {
-            $userId = $_POST["userId"];
-            if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
-                $linkInfo = array(
-                    "id" => $_POST["linkId"],
-                    "title" => $_POST["linkTitle"],
-                    "url" => $_POST["linkUrl"],
-                    "description" => $_POST["linkDescription"],
-                    "privacy" => $_POST["linkPrivacy"]
-                );
-                $linkModel->edit($linkInfo);
-                echo json_encode(array("edited"=>"ok", "message" => "Link edited!"));
-            } else {
-                echo json_encode(array("edited"=>"not", "message" => "Link with such url already exists"));
+                if ($_POST["pastLinkUrl"] == $_POST["linkUrl"] || $linkModel->isUnique($userId, $_POST["linkUrl"])) {
+                    $linkInfo = array(
+                        "id" => $_POST["linkId"],
+                        "title" => $_POST["linkTitle"],
+                        "url" => $_POST["linkUrl"],
+                        "description" => $_POST["linkDescription"],
+                        "privacy" => $_POST["linkPrivacy"]
+                    );
+                    $linkModel->edit($linkInfo);
+                    App::redirect("link/read/" . $_POST["linkId"]);
+                } else {
+                    $linkInfo = array(
+                        "linkId" => $_POST["linkId"],
+                        "userId" => $_POST["userId"],
+                        "title" => $_POST["linkTitle"],
+                        "url" => $_POST["pastLinkUrl"],
+                        "description" => $_POST["linkDescription"],
+                        "private" => $_POST["linkPrivacy"]);
+                    $data->setData("linkInfo", $linkInfo);
+                    $data->setData("errorMessage", "Link with such url already exists");
+                }
             }
+            else {
+                $link = $linkModel->get($linkId);
+                $linkInfo = array(
+                    "linkId" => $link["id"],
+                    "userId" => $link["userId"],
+                    "title" => $link["title"],
+                    "url" => $link["url"],
+                    "description" => $link["description"],
+                    "private" => $link["private"]);
+                $data->setData("linkInfo", $linkInfo);
+            }
+            $this->view = "LinkEdit";
+            $this->renderView();
         }
     }
-
-
-
-
 }
