@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const linkElements = document.getElementsByClassName("link-element");
+    for (let key of linkElements){
+        console.log(linkElements);
+    }
     for (let i=0; i < linkElements.length; i++) {
         const editButton = linkElements[i].getElementsByClassName("btn-edit")[0];
         if (editButton) {
