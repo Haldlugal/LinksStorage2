@@ -56,7 +56,7 @@ class MailerService {
         $this->mail->addAddress($email);
         $this->mail->Subject = "Account verification from Blog";
         $this->mail->Body = "<p>Thanks for signing up!</p>
-        <p>Your account has been created. Please activate it using following link: <a href='http://linkstorage/verify/?verificationText=$verificationText'>http://linkstorage/verify/?verificationText=$verificationText</a></p>";
+        <p>Your account has been created. Please activate it using following link: <a href='http://".$_SERVER['HTTP_HOST']."/verify/?verificationText=$verificationText'>http://".$_SERVER['HTTP_HOST']."/verify/?verificationText=$verificationText</a></p>";
         try {
             $this->mail->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {
