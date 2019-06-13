@@ -175,29 +175,17 @@ function createDatabase() {
     $sql = $pdo->prepare("
         ALTER TABLE `links`
         MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-        --
-        -- AUTO_INCREMENT for table `migrations`
-        --
         ALTER TABLE `migrations`
         MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-        --
-        -- AUTO_INCREMENT for table `rolePermissions`
-        --
         ALTER TABLE `rolePermissions`
         MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
-        --
-        -- AUTO_INCREMENT for table `roles`
-        --
         ALTER TABLE `roles`
         MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-        --
-        -- AUTO_INCREMENT for table `users`
-        --
         ALTER TABLE `users`
         MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;");
     $sql->execute();
 
-    $sql = $pdo->prepare("ALTER TABLE `links`
+    /*$sql = $pdo->prepare("ALTER TABLE `links`
         ADD CONSTRAINT `links_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);        
         
         ALTER TABLE `rolePermissions`
@@ -205,7 +193,7 @@ function createDatabase() {
        
         ALTER TABLE `users`
         ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `roles` (`id`);");
-    $sql->execute();
+    $sql->execute();*/
 }
 
 function migrate() {
