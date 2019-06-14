@@ -5,12 +5,12 @@ require_once "app/Autoloader.php";
 
 Autoloader::run();
 ServiceProvider::setDefaultServices();
-
+chdir("/vagrant/LinksStorage");
 if ($argv[1] == "migrate") {
-    migrate();
+    migrate($argv[2]);
 }
 else if ($argv[1] == "add") {
-    addMigration($argv[2]);
+    addMigrations();
 }
 else if ($argv[1] == "remove") {
     removeMigration($argv[2]);
@@ -25,7 +25,7 @@ function createDatabase() {
     $login = $config->getDbLogin();
     $password = $config->getDbPassword();
     $database = $config->getDbName();
-    $pdo = @new PDO(
+    $pdo = new PDO(
         "mysql:host=$host",
         $login,
         $password
@@ -195,33 +195,34 @@ function createDatabase() {
     $sql->execute();
 }
 
-function migrate() {
+function migrate($version = 0)
+{
     $database = ServiceProvider::getService("Database");
     $pdo = $database->getConnection();
-    $statement = $pdo->prepare("SELECT * FROM migrations ORDER BY date_created ASC");
-    $statement->execute();
-    $migrations = $statement->fetchAll();
-    foreach($migrations as $migrationName) {
-        $migration = new $migrationName["name"];
-        $migration->up();
+    $scanned_migrations = array_diff(scandir('app/migrations'), array('..', '.'));
+    $migrations = array();
+    foreach ($scanned_migrations as $migration) {
+        $arr = explode(".", $migration, 2);
+        $migrationName = $arr[0];
+        $migration = new $migrationName;
+        $migrationVersion = $migration->version;
+        $migrations[$migrationVersion] = $migrationName;
     }
-    $statement = $pdo->prepare("DELETE FROM migrations");
-    $statement->execute();
-}
-
-function addMigration($migrationName) {
-    $database = ServiceProvider::getService("Database");
-    $pdo = $database->getConnection();
-    $statement = $pdo->prepare("INSERT INTO migrations (name) VALUES (:migrationName)");
-    $data = array("migrationName"=>$migrationName);
-    $statement->execute($data);
-}
-
-function removeMigration($migrationName) {
-    $database = ServiceProvider::getService("Database");
-    $pdo = $database->getConnection();
-    $statement = $pdo->prepare("DELETE FROM migrations WHERE name = :migrationName");
-    $data = array("migrationName"=>$migrationName);
-    $statement->execute($data);
-
+    ksort($migrations);
+    foreach ($migrations as $migrationVersion => $migrationName) {
+        if ($version == 0 || $migrationVersion <= $version) {
+            $statement = $pdo->prepare("SELECT * FROM migrations WHERE version = :version");
+            $data = array("version" => $migrationVersion);
+            $statement->execute($data);
+            if ($statement->fetchColumn()) {
+                continue;
+            } else {
+                $migration = new $migrationName;
+                $migration->up();
+                $statement = $pdo->prepare("INSERT IGNORE INTO migrations (name, version) VALUES (:migrationName, :version)");
+                $data = array("migrationName" => $migrationName, "version" => $migrationVersion);
+                $statement->execute($data);
+            }
+        }
+    }
 }

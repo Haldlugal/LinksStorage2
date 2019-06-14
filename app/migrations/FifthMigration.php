@@ -1,15 +1,15 @@
 <?php
 
 
-class SecondMigration
+class FifthMigration
 {
-    public $version = 2;
+    public $version = 5;
 
     public function up() {
-        echo "Second";
+        echo "3";
         /*$database = ServiceProvider::getService("Database");
         $pdo = $database->getConnection();
-        $statement = $pdo->prepare("CREATE TABLE IF NOT EXISTS tasks1 (
+        $statement = $pdo->prepare("CREATE TABLE IF NOT EXISTS tasks (
             task_id INT AUTO_INCREMENT,
             title VARCHAR(255) NOT NULL,
             start_date DATE,

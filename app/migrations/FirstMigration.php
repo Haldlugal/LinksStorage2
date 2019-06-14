@@ -3,6 +3,8 @@
 
 class FirstMigration
 {
+    public $version = 1;
+
     public function up() {
         echo "First";
         /*$database = ServiceProvider::getService("Database");
